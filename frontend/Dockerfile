@@ -1,20 +1,21 @@
-# Use Node.js as the base image
-FROM node:18.17.0
+FROM node:14-alpine
 
-# Set the working directory
+
 WORKDIR /frontend
 
-# Copy package.json and package-lock.json
+
 COPY package*.json ./
 
-# Install dependencies
-RUN npm install -g npm@10.9.0
 
-# Copy the rest of the application code
+RUN npm ci
+
+
 COPY . .
 
-# Expose the port that Angular serves on
+
+RUN npm run build --prod
+
+
 EXPOSE 4200
 
-# Start the Angular application with ng serve
 CMD ["npm", "start"]
