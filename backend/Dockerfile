@@ -10,4 +10,4 @@ COPY src ./src
 
 EXPOSE 8080
 
-CMD mvn spring-boot:run
+CMD mvn spring-boot:run -Dspring-boot.run.profiles

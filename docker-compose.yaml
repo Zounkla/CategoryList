@@ -10,11 +10,9 @@ services:
       - "4200:4200"
     volumes:
       - .:/app
-    networks:
-      - my-network
 
   db:
-    container_name: postgres_category
+    container_name: db
     image: postgres:alpine3.19
     environment:
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
@@ -44,12 +42,6 @@ services:
       - "8080:8080"
     volumes:
       - .:/app
-    networks:
-      - my-network
 volumes:
   app:
   data-vol:
-
-networks:
-  my-network:
-    driver: bridge
