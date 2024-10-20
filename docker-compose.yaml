@@ -9,7 +9,7 @@ services:
     ports:
       - "4200:4200"
     volumes:
-      - .:/app
+      - ./frontend:/frontend
 
   db:
     container_name: db
@@ -41,7 +41,9 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - .:/app
+      - ./backend:/backend
+    stdin_open: true
+    tty: true
+
 volumes:
-  app:
   data-vol:
