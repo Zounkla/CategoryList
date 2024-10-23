@@ -76,12 +76,14 @@ public class CategoryService {
         Category parent = optionalParentCategory.get();
         Category child = optionalChildCategory.get();
         Category oldParent = child.getParent();
-        oldParent.removeChildren(child);
+        if (oldParent != null) {
+            oldParent.removeChildren(child);
+            categoryRepository.save(oldParent);
+        }
         child.setParent(parent);
         parent.addChildren(child);
         categoryRepository.save(child);
         categoryRepository.save(parent);
-        categoryRepository.save(oldParent);
         return parent;
     }
 
