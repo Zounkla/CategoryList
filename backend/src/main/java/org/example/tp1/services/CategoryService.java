@@ -82,6 +82,17 @@ public class CategoryService {
         return parent;
     }
 
+    public Category updateName(String oldName, String newName) {
+        Optional<Category> optionalCategory = categoryRepository.findByName(oldName);
+        if (optionalCategory.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found");
+        }
+        Category category = optionalCategory.get();
+        category.setName(newName);
+        categoryRepository.save(category);
+        return category;
+    }
+
     public Category getCategory(String categoryName) {
         Optional<Category> optionalCategory = categoryRepository.findByName(categoryName);
         if (optionalCategory.isEmpty()) {

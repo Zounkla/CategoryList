@@ -79,7 +79,7 @@ public class CategoryController {
     @RequestMapping(value="/category/updateParent", method = RequestMethod.PUT,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> childAssociation(@RequestBody String paramJSON) {
+    public ResponseEntity<String> updateParent(@RequestBody String paramJSON) {
         JSONObject jsonObject = new JSONObject(paramJSON);
 
         if (jsonObject.isNull("parent")) {
@@ -123,6 +123,64 @@ public class CategoryController {
                             "Category does not exists")
             );
         }
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Changed category name"),
+            @ApiResponse(responseCode = "412", description = "Category does not exists"),
+
+    })
+    @Operation(summary = "Update category name", description = "Modify name field in database")
+    @RequestMapping(value="/category/updateName", method = RequestMethod.PUT,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> updateName(@RequestBody String paramJSON) {
+        JSONObject jsonObject = new JSONObject(paramJSON);
+
+        if (jsonObject.isNull("oldName")) {
+            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(
+                    categoryService.createError(HttpStatus.PRECONDITION_FAILED,
+                            "A name is required")
+            );
+        }
+
+        String name = jsonObject.getString("oldName");
+
+        if (name == null || name.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(
+                    categoryService.createError(HttpStatus.PRECONDITION_FAILED,
+                            "A name is required")
+            );
+        }
+
+        if (jsonObject.isNull("newName")) {
+            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(
+                    categoryService.createError(HttpStatus.PRECONDITION_FAILED,
+                            "A name is required")
+            );
+        }
+
+        String newName = jsonObject.getString("newName");
+
+        if (newName == null || newName.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(
+                    categoryService.createError(HttpStatus.PRECONDITION_FAILED,
+                            "A name is required")
+            );
+        }
+
+        try {
+            Category category = categoryService.updateName(name, newName);
+            return ResponseEntity.ok(categoryService.createCategoryJSON(category));
+        } catch (ResponseStatusException e) {
+        return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(
+                categoryService.createError(HttpStatus.PRECONDITION_FAILED,
+                        "Category does not exists")
+        );
+    }
+
+
+
     }
 
     @ApiResponses(value = {
@@ -176,4 +234,5 @@ public class CategoryController {
         List<Category> categories = categoryService.getCategories();
         return ResponseEntity.ok(categoryService.createCategoriesJSON(categories));
     }
+
 }
