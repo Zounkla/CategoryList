@@ -4,6 +4,7 @@ import org.example.tp1.entities.Category;
 import org.example.tp1.repositories.CategoryRepository;
 import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -47,5 +48,20 @@ public class CategoryService {
         Category category = new Category(name);
         categoryRepository.save(category);
         return category;
+    }
+
+    public Category associateChild(String parentName, String childName) {
+        Optional<Category> optionalParentCategory = categoryRepository.findByName(parentName);
+        Optional<Category> optionalChildCategory = categoryRepository.findByName(childName);
+        if (optionalParentCategory.isEmpty() || optionalChildCategory.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found");
+        }
+        Category parent = optionalParentCategory.get();
+        Category child = optionalChildCategory.get();
+        child.setParent(parent);
+        parent.addChildren(child);
+        categoryRepository.save(child);
+        categoryRepository.save(parent);
+        return parent;
     }
 }
