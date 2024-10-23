@@ -186,6 +186,7 @@ public class CategoryController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Category found"),
             @ApiResponse(responseCode = "404", description = "Category not found"),
+            @ApiResponse(responseCode = "412", description = "Must provide a name"),
 
     })
     @Operation(summary = "Return a category", description = "Select the category on database and return it in JSON format")
@@ -233,6 +234,47 @@ public class CategoryController {
     public ResponseEntity<String> getCategories() {
         List<Category> categories = categoryService.getCategories();
         return ResponseEntity.ok(categoryService.createCategoriesJSON(categories));
+    }
+
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Category found"),
+            @ApiResponse(responseCode = "404", description = "Category not found"),
+            @ApiResponse(responseCode = "412", description = "Must provide a name"),
+
+    })
+    @Operation(summary = "Delete a category", description = "Delete a category from database")
+    @RequestMapping(value="/category/deleteCategory", method = RequestMethod.DELETE,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> deleteCategory(@RequestBody String paramJSON) {
+        JSONObject jsonObject = new JSONObject(paramJSON);
+
+        if (jsonObject.isNull("name")) {
+            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(
+                    categoryService.createError(HttpStatus.PRECONDITION_FAILED,
+                            "A name is required")
+            );
+        }
+
+        String name = jsonObject.getString("name");
+
+        if (name == null || name.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(
+                    categoryService.createError(HttpStatus.PRECONDITION_FAILED,
+                            "A name is required")
+            );
+        }
+
+        try {
+            Category category = categoryService.deleteCategory(name);
+            return ResponseEntity.ok(categoryService.createCategoryJSON(category));
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    categoryService.createError(HttpStatus.NOT_FOUND,
+                            "Category does not exists")
+            );
+        }
     }
 
 }

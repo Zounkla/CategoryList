@@ -109,4 +109,21 @@ public class CategoryService {
     public List<Category> getCategories() {
         return categoryRepository.findBy();
     }
+
+    public Category deleteCategory(String categoryName) {
+        Optional<Category> optionalCategory = categoryRepository.findByName(categoryName);
+        if (optionalCategory.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found");
+        }
+        Category category = optionalCategory.get();
+        Category parent = category.getParent();
+        for (Category child : category.getChildren()) {
+            child.setParent(parent);
+            if (parent != null) {
+                parent.addChildren(child);
+            }
+        }
+        categoryRepository.delete(category);
+        return category;
+    }
 }
