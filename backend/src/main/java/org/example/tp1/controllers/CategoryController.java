@@ -115,7 +115,7 @@ public class CategoryController {
         }
 
         try {
-            Category category = categoryService.associateChild(parent, child);
+            Category category = categoryService.updateParent(parent, child);
             return ResponseEntity.ok(categoryService.createCategoryJSON(category));
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(

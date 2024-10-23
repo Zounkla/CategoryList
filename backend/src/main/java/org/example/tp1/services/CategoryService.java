@@ -67,7 +67,7 @@ public class CategoryService {
         return category;
     }
 
-    public Category associateChild(String parentName, String childName) {
+    public Category updateParent(String parentName, String childName) {
         Optional<Category> optionalParentCategory = categoryRepository.findByName(parentName);
         Optional<Category> optionalChildCategory = categoryRepository.findByName(childName);
         if (optionalParentCategory.isEmpty() || optionalChildCategory.isEmpty()) {
@@ -75,10 +75,13 @@ public class CategoryService {
         }
         Category parent = optionalParentCategory.get();
         Category child = optionalChildCategory.get();
+        Category oldParent = child.getParent();
+        oldParent.removeChildren(child);
         child.setParent(parent);
         parent.addChildren(child);
         categoryRepository.save(child);
         categoryRepository.save(parent);
+        categoryRepository.save(oldParent);
         return parent;
     }
 
