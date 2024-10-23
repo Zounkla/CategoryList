@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+
 @Controller
 public class CategoryController {
 
@@ -121,5 +123,57 @@ public class CategoryController {
                             "Category does not exists")
             );
         }
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Category found"),
+            @ApiResponse(responseCode = "404", description = "Category not found"),
+
+    })
+    @Operation(summary = "Return a category", description = "Select the category on database and return it in JSON format")
+    @RequestMapping(value="/category/getCategory", method = RequestMethod.GET,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> getCategory(@RequestBody String paramJSON) {
+        JSONObject jsonObject = new JSONObject(paramJSON);
+
+        if (jsonObject.isNull("name")) {
+            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(
+                    categoryService.createError(HttpStatus.PRECONDITION_FAILED,
+                            "A name is required")
+            );
+        }
+
+        String name = jsonObject.getString("name");
+
+        if (name == null || name.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(
+                    categoryService.createError(HttpStatus.PRECONDITION_FAILED,
+                            "A name is required")
+            );
+        }
+
+        try {
+            Category category = categoryService.getCategory(name);
+            return ResponseEntity.ok(categoryService.createCategoryJSON(category));
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    categoryService.createError(HttpStatus.NOT_FOUND,
+                            "Category does not exists")
+            );
+        }
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Category found"),
+
+    })
+    @Operation(summary = "Return all the categories", description = "Select all the categories on database and " +
+            "return it in JSON format")
+    @RequestMapping(value="/category/getCategories", method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> getCategories() {
+        List<Category> categories = categoryService.getCategories();
+        return ResponseEntity.ok(categoryService.createCategoriesJSON(categories));
     }
 }

@@ -56,6 +56,14 @@ public class Category {
         return children;
     }
 
+    public List<String> getChildrenNames() {
+        List<String> list = new ArrayList<>();
+        for (Category child : children) {
+            list.add(child.getName());
+        }
+        return list;
+    }
+
     public void addChildren(Category child) {
         if(child == this) {
             throw new IllegalArgumentException("Cannnot be child of itself");

@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -31,11 +32,27 @@ public class CategoryService {
         Map<String, String> map = new HashMap<>();
         map.put("id", String.valueOf(category.getId()));
         map.put("name", category.getName());
-        map.put("children", category.getChildren().toString());
+        map.put("children", category.getChildrenNames().toString());
         Category parent = category.getParent();
         map.put("parent", parent == null ? "null" : parent.getName());
         map.put("date", category.getCreationDate().toString());
         JSONObject jo = new JSONObject(map);
+        return jo.toString();
+    }
+
+    public String createCategoriesJSON(List<Category> categories) {
+        Map<String, Map<String, String>> jsonMap = new HashMap<>();
+        for (Category category : categories) {
+            Map<String, String> map = new HashMap<>();
+            map.put("id", String.valueOf(category.getId()));
+            map.put("name", category.getName());
+            map.put("children", category.getChildrenNames().toString());
+            Category parent = category.getParent();
+            map.put("parent", parent == null ? "null" : parent.getName());
+            map.put("date", category.getCreationDate().toString());
+            jsonMap.put(category.getName(), map);
+        }
+        JSONObject jo = new JSONObject(jsonMap);
         return jo.toString();
     }
 
@@ -63,5 +80,17 @@ public class CategoryService {
         categoryRepository.save(child);
         categoryRepository.save(parent);
         return parent;
+    }
+
+    public Category getCategory(String categoryName) {
+        Optional<Category> optionalCategory = categoryRepository.findByName(categoryName);
+        if (optionalCategory.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found");
+        }
+        return optionalCategory.get();
+    }
+
+    public List<Category> getCategories() {
+        return categoryRepository.findBy();
     }
 }
