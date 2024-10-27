@@ -1,6 +1,8 @@
 {
+  "baseUrl": ".",
   "compileOnSave": false,
   "compilerOptions": {
+    "allowJs": true,
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
     "declaration": false,
