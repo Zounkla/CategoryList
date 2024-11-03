@@ -38,7 +38,9 @@ public class Category {
         this.creationDate = new Date();
     }
 
-    protected Category() {}
+    protected Category() {
+        this.children = new ArrayList<>();
+    }
 
     public Integer getId() {
         return id;
