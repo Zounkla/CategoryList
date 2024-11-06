@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Category} from '../category';
 import {ActivatedRoute, Router} from '@angular/router';
 import {CategoryService} from '../category-service.service';
@@ -8,9 +8,12 @@ import {CategoryService} from '../category-service.service';
   templateUrl: './category-form.component.html',
   styleUrls: ['./category-form.component.css']
 })
-export class CategoryFormComponent {
+export class CategoryFormComponent implements OnInit {
 
   category: Category;
+
+  categories: Category[];
+
   constructor(private route: ActivatedRoute,
               private router: Router,
               private categoryService: CategoryService) {
@@ -19,6 +22,21 @@ export class CategoryFormComponent {
 
   onSubmit() {
     this.categoryService.save(this.category).subscribe(() => this.gotoCategoryList());
+  }
+
+  onChange(newValue) {
+    this.category.parentName = newValue;
+  }
+
+  ngOnInit() {
+    this.categories = [];
+    this.fetchData();
+  }
+
+  fetchData() {
+    this.categoryService.findAll().subscribe(data => {
+      this.categories = Object.values(data);
+    });
   }
 
   gotoCategoryList() {
