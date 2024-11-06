@@ -41,15 +41,17 @@ public class CategoryController {
     public ResponseEntity<String> insert(@RequestBody String nameJSON) {
 
         JSONObject jsonObject = new JSONObject(nameJSON);
-
         if (jsonObject.isNull("name")) {
             return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(
                     categoryService.createError(HttpStatus.PRECONDITION_FAILED,
                             "A name is required")
             );
         }
-
         String name = jsonObject.getString("name");
+        String parentName = "";
+        if (!jsonObject.isNull("parentName")) {
+            parentName = jsonObject.getString("parentName");
+        }
 
         if (name == null || name.isEmpty()) {
             return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(
@@ -65,7 +67,14 @@ public class CategoryController {
             );
         }
 
-        Category category = categoryService.insertCategory(name);
+        if (!parentName.isEmpty() && !categoryService.categoryAlreadyExists(parentName)) {
+            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(
+                    categoryService.createError(HttpStatus.PRECONDITION_FAILED,
+                            "Parent category does not exist")
+            );
+        }
+        Category parent = parentName.isEmpty() ? null : categoryService.getCategory(parentName);
+        Category category = categoryService.insertCategory(name, parent);
         return ResponseEntity.ok(categoryService.createCategoryJSON(category));
     }
 

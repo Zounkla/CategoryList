@@ -24,17 +24,10 @@ public class Category {
 
     private Date creationDate;
 
-    public Category(String name, List<Category> children, Category parent) {
-        this.name = name;
-        this.children = children;
-        this.parent = parent;
-        this.creationDate = new Date();
-    }
-
-    public Category(String name) {
+    public Category(String name, Category parent) {
         this.name = name;
         this.children = new ArrayList<>();
-        this.parent = null;
+        this.parent = parent;
         this.creationDate = new Date();
     }
 

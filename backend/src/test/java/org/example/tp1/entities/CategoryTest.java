@@ -20,29 +20,15 @@ class CategoryTest {
     }
 
     @Test
-    void constructorWithName() {
-        //GIVEN
-        String name = "name";
-        //WHEN
-        Category newCategory = new Category(name);
-        //THEN
-        assertThat(newCategory.getName()).isEqualTo(name);
-    }
-
-    @Test
-    void constructorWithNameAndChildrenAndParent() {
+    void constructorWithNameAndParent() {
         //GIVEN
         String name = "name";
         Category parent = new Category();
-        List<Category> children = new ArrayList<>();
-        children.add(new Category());
-        children.add(new Category());
         //WHEN
-        Category newCategory = new Category(name, children, parent);
+        Category newCategory = new Category(name, parent);
         //THEN
         assertThat(newCategory.getName()).isEqualTo(name);
         assertThat(newCategory.getParent()).isEqualTo(parent);
-        assertThat(newCategory.getChildren()).isEqualTo(children);
     }
 
     @Test
@@ -60,8 +46,8 @@ class CategoryTest {
         //GIVEN
         String name1 = "hello";
         String name2 = "test";
-        Category child1 = new Category(name1);
-        Category child2 = new Category(name2);
+        Category child1 = new Category(name1, null);
+        Category child2 = new Category(name2, null);
         category.addChildren(child1);
         category.addChildren(child2);
         List<String> expectedNames = new ArrayList<>();

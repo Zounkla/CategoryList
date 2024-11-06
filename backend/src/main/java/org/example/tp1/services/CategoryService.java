@@ -61,8 +61,8 @@ public class CategoryService {
         return optionalCategory.isPresent();
     }
 
-    public Category insertCategory(String name) {
-        Category category = new Category(name);
+    public Category insertCategory(String name, Category parent) {
+        Category category = new Category(name, parent);
         categoryRepository.save(category);
         return category;
     }
