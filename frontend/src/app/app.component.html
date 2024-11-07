@@ -1,7 +1,7 @@
 <div class="container-fluid">
   <div class="row">
-    <div class="col">
-      Current parent category {{ actualParentName }}
+    <div class="col-1">
+      Current parent category: <p class="text-break"> {{ actualParentName }} </p>
     </div>
     <div class="col-9">
       <div class="card bg-dark my-5">
@@ -16,7 +16,7 @@
       </div>
       <router-outlet></router-outlet>
     </div>
-    <div class="col">
+    <div class="col-2">
       <ul class="text-center list-inline py-3">
         <li class="list-inline-item">
           <a routerLink="/category" class="btn btn-info">Add Category</a>

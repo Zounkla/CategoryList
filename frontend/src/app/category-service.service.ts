@@ -3,6 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs/Observable';
 import {Category} from './category';
 import {Subject} from 'rxjs/Subject';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 
 @Injectable()
 export class CategoryService {
@@ -27,4 +28,7 @@ export class CategoryService {
   public save(category: Category) {
     return this.http.post<Category>(this.categoryUrl, category);
   }
+
+  public lastParentName: BehaviorSubject<string> = new BehaviorSubject<string>('None');
+
 }

@@ -28,6 +28,6 @@ export class CategoryListComponent implements OnInit {
   }
 
   printCategory(category: Category) {
-    console.log(category.name);
+    this.categoryService.lastParentName.next(category.name);
   }
 }
