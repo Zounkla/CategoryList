@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs/Observable';
 import {Category} from './category';
+import {Subject} from 'rxjs/Subject';
 
 @Injectable()
 export class CategoryService {
@@ -9,6 +10,10 @@ export class CategoryService {
   private categoryUrl: string;
 
   private categoriesUrl: string;
+
+  private parentName: string;
+
+  private parentNameChange: Subject<string> = new Subject<string>();
 
   constructor(private http: HttpClient) {
     this.categoryUrl = 'http://localhost:8080/category';

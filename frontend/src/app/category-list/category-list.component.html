@@ -8,7 +8,11 @@
       </thead>
       <tbody>
       <tr *ngFor="let category of categories">
-        <td>{{ category.name }}</td>
+        <td>
+          <button type="button" (click)="printCategory(category)">
+                     {{ category.name }}
+          </button>
+        </td>
       </tr>
       </tbody>
     </table>

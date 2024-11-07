@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Output, EventEmitter } from '@angular/core';
 import {Category} from '../category';
 import {CategoryService} from '../category-service.service';
 
@@ -10,6 +11,7 @@ import {CategoryService} from '../category-service.service';
 export class CategoryListComponent implements OnInit {
 
   categories: Category[];
+
   constructor(private categoryService: CategoryService) {
     this.categories = [];
   }
@@ -23,5 +25,9 @@ export class CategoryListComponent implements OnInit {
     this.categoryService.findAll().subscribe(data => {
       this.categories = Object.values(data);
     });
+  }
+
+  printCategory(category: Category) {
+    console.log(category.name);
   }
 }
