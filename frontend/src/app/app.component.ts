@@ -23,7 +23,7 @@ export class AppComponent implements OnInit {
     this.service.lastParentName.subscribe( value => {
       this.actualParentName = value;
     });
-    this.service.findParent(this.actualParentName).subscribe(data => {
+    this.service.findCategoriesByPageAndParent(0, this.actualParentName).subscribe(data => {
       this.categories = Object.values(data);
     });
   }
