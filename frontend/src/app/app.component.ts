@@ -12,7 +12,7 @@ export class AppComponent implements OnInit {
 
   title: string;
   actualParentName: string;
-  lastParentName: string;
+
   category: Category;
   categories: Category[];
 
@@ -20,23 +20,20 @@ export class AppComponent implements OnInit {
     this.title = 'CategoryList';
     this.category = new Category();
     this.actualParentName = 'None';
-    this.lastParentName = this.actualParentName;
     this.service.lastParentName.subscribe( value => {
       this.actualParentName = value;
+    });
+    this.service.findParent(this.actualParentName).subscribe(data => {
+      this.categories = Object.values(data);
     });
   }
 
   ngOnInit() {
-    this.router.navigate(['/category/getCategories']);
+    this.router.navigate(['/home']);
   }
 
   resetParent() {
-    this.category = new Category();
-    this.category.name = 'None';
     this.actualParentName = 'None';
-    this.service.findParent(this.actualParentName).subscribe(data => {
-      this.categories = Object.values(data);
-    });
     this.service.changeCategories(this.categories);
   }
 }
