@@ -15,11 +15,19 @@ export class CategoryListComponent implements OnInit {
 
   parentName: string;
 
+  pageCount: number;
+
+  currentPage: number;
+
   constructor(private categoryService: CategoryService) {
     this.categoryService.currentCategories.subscribe(
       value => this.categories = value
     );
+    this.categoryService.pageCount.subscribe(
+      value => this.pageCount = value
+    )
     this.parentName = 'None';
+    this.currentPage = 0
   }
 
   ngOnInit() {
@@ -27,14 +35,46 @@ export class CategoryListComponent implements OnInit {
   }
 
   fetchData() {
-    this.categoryService.findParent(this.parentName).subscribe(data => {
+    this.categoryService.findCategoriesByPageAndParent(this.currentPage, this.parentName).subscribe(data => {
       this.categories = Object.values(data);
     });
+    this.categoryService.findPageCategoriesCount(this.parentName).subscribe(data => {
+      this.pageCount = data.id;
+    })
   }
 
   changeParentCategory(category: Category) {
     this.parentName = category.name;
+    this.currentPage = 0;
     this.fetchData();
     this.categoryService.lastParentName.next(category.name);
+  }
+
+  displayFirstPage() {
+    this.currentPage = 0
+    this.fetchData();
+  }
+
+  displayLastPage() {
+    this.currentPage = this.pageCount - 1;
+    this.fetchData();
+  }
+
+  displayPreviousPage() {
+    this.currentPage = this.currentPage - 1;
+    this.fetchData();
+  }
+
+  displayNextPage() {
+    this.currentPage = this.currentPage + 1;
+    this.fetchData();
+  }
+
+  isNotPossibleToDisplayPreviousPage(): boolean {
+    return this.currentPage <= 0;
+  }
+
+  isNotPossibleToDisplayNextPage(): boolean {
+    return this.currentPage >= this.pageCount - 1;
   }
 }

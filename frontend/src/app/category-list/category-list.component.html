@@ -17,4 +17,19 @@
       </tbody>
     </table>
   </div>
+  <div class="d-flex justify-content-around">
+    <div>
+      <button class="position-relative" (click)="displayFirstPage()">&laquo;</button>
+      <button class="position-relative" (click)="displayPreviousPage()"
+              [disabled]="isNotPossibleToDisplayPreviousPage()">&lsaquo;</button>
+    </div>
+    <div>
+      <p>Page {{currentPage + 1}} sur {{pageCount}}</p>
+    </div>
+    <div>
+      <button class="position-relative" (click)="displayNextPage()"
+              [disabled]="isNotPossibleToDisplayNextPage()">&rsaquo;</button>
+      <button class="position-relative" (click)="displayLastPage()">&raquo;</button>
+    </div>
+  </div>
 </div>
