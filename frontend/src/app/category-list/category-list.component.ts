@@ -1,33 +1,40 @@
-import { Component, OnInit } from '@angular/core';
-import { Output, EventEmitter } from '@angular/core';
+import {Component, Input, OnInit, Output} from '@angular/core';
 import {Category} from '../category';
 import {CategoryService} from '../category-service.service';
+import {EventEmitter} from 'protractor';
+import {v} from '@angular/core/src/render3';
 
 @Component({
   selector: 'app-category-list',
   templateUrl: './category-list.component.html',
-  styleUrls: ['./category-list.component.css']
+  styleUrls: ['./category-list.component.css'],
 })
 export class CategoryListComponent implements OnInit {
 
   categories: Category[];
 
+  parentName: string;
+
   constructor(private categoryService: CategoryService) {
-    this.categories = [];
+    this.categoryService.currentCategories.subscribe(
+      value => this.categories = value
+    );
+    this.parentName = 'None';
   }
 
   ngOnInit() {
-    this.categories = [];
     this.fetchData();
   }
 
   fetchData() {
-    this.categoryService.findAll().subscribe(data => {
+    this.categoryService.findParent(this.parentName).subscribe(data => {
       this.categories = Object.values(data);
     });
   }
 
-  printCategory(category: Category) {
+  changeParentCategory(category: Category) {
+    this.parentName = category.name;
+    this.fetchData();
     this.categoryService.lastParentName.next(category.name);
   }
 }

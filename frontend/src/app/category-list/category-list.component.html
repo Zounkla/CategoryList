@@ -9,7 +9,7 @@
       <tbody>
       <tr *ngFor="let category of categories">
         <td>
-          <button type="button" (click)="printCategory(category)">
+          <button type="button" (click)="changeParentCategory(category)">
                      {{ category.name }}
           </button>
         </td>
