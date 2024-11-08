@@ -126,4 +126,8 @@ public class CategoryService {
         categoryRepository.delete(category);
         return category;
     }
+
+    public List<Category> getChildren(Category category) {
+        return this.categoryRepository.findByParent(category);
+    }
 }
