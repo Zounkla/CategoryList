@@ -3,6 +3,8 @@ package org.example.tp1.services;
 import org.example.tp1.entities.Category;
 import org.example.tp1.repositories.CategoryRepository;
 import org.json.JSONObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -125,5 +127,17 @@ public class CategoryService {
         }
         categoryRepository.delete(category);
         return category;
+    }
+
+    public List<Category> getPaginatedCategories(int page, String parentName) {
+        Optional<Category> optionalCategory = categoryRepository.findByName(parentName);
+        Category parent = optionalCategory.orElse(null);
+        Page<Category> categoryPage;
+        if (parent == null) {
+            categoryPage = categoryRepository.findAllByParentIsNull(PageRequest.of(page, 2));
+            return categoryPage.getContent();
+        }
+        categoryPage = categoryRepository.findAllByParent(parent, PageRequest.of(page, 2));
+        return categoryPage.getContent();
     }
 }

@@ -10,10 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -232,6 +229,19 @@ public class CategoryController {
                             "Category does not exists")
             );
         }
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Category found"),
+
+    })
+    @Operation(summary = "Return all the categories", description = "Select all the categories on database and " +
+            "return it in JSON format and limit the result")
+    @RequestMapping(value="/category/getPaginatedCategories", method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> getPaginatedCategories(@RequestParam int page, @RequestParam String parentName) {
+        List<Category> categories = categoryService.getPaginatedCategories(page, parentName);
+        return ResponseEntity.ok(categoryService.createCategoriesJSON(categories));
     }
 
     @ApiResponses(value = {
