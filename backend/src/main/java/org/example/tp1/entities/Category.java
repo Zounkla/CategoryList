@@ -19,7 +19,7 @@ public class Category {
     @OneToMany
     private List<Category> children;
 
-    @OneToOne
+    @ManyToOne
     private Category parent;
 
     private Date creationDate;
