@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -311,4 +312,37 @@ public class CategoryController {
         }
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Category found"),
+            @ApiResponse(responseCode = "404", description = "Category not found"),
+            @ApiResponse(responseCode = "412", description = "Must provide a name"),
+
+    })
+    @Operation(summary = "Retrieves all children names of a category", description = "Returns each child name of given category")
+    @RequestMapping(value="/category/children", method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> getChildren(@RequestParam String name) {
+
+        if (name.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(
+                    categoryService.createError(HttpStatus.PRECONDITION_FAILED,
+                            "Must provide a category name")
+            );
+        }
+
+        if (!name.equals("None") && !categoryService.categoryAlreadyExists(name)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    categoryService.createError(HttpStatus.NOT_FOUND,
+                            "Category does not exists")
+            );
+        }
+        List<Category> children;
+        if (name.equals("None")) {
+            children = categoryService.getCategories();
+        } else {
+           Category category = categoryService.getCategory(name);
+           children = categoryService.getChildren(category);
+        }
+        return ResponseEntity.ok(categoryService.createCategoriesJSON(children));
+    }
 }

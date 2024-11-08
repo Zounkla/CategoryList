@@ -131,6 +131,10 @@ public class CategoryService {
         return category;
     }
 
+    public List<Category> getChildren(Category category) {
+        return this.categoryRepository.findByParent(category);
+    }
+
     public List<Category> getPaginatedCategories(int page, String parentName) {
         Page<Category> categoryPage = getCategoryPage(page, parentName);
         return categoryPage.getContent();

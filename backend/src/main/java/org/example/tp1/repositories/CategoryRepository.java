@@ -20,4 +20,6 @@ public interface CategoryRepository extends CrudRepository<Category, Integer> {
     Page<Category> findAllByParent(Category parent, Pageable pageable);
 
     Optional<Category> findByName(String name);
+
+    List<Category> findByParent(Category category);
 }

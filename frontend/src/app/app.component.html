@@ -1,20 +1,27 @@
-<div class="container">
+<div class="container-fluid">
   <div class="row">
-    <div class="col-md-12">
+    <div class="col-1">
+      Current parent category: <p class="text-break"> {{ actualParentName }} </p>
+    </div>
+    <div class="col-9">
       <div class="card bg-dark my-5">
         <div class="card-body">
           <h2 class="card-title text-center text-white py-3">{{ title }}</h2>
           <ul class="text-center list-inline py-3">
             <li class="list-inline-item">
-              <a routerLink="/category/getCategories" class="btn btn-info">List Categories</a>
-            </li>
-            <li class="list-inline-item">
-              <a routerLink="/category" class="btn btn-info">Add Category</a>
+              <a (click)='resetParent()' class="btn btn-info">Home</a>
             </li>
           </ul>
         </div>
       </div>
       <router-outlet></router-outlet>
+    </div>
+    <div class="col-2">
+      <ul class="text-center list-inline py-3">
+        <li class="list-inline-item">
+          <a routerLink="/category" class="btn btn-info">Add Category</a>
+        </li>
+      </ul>
     </div>
   </div>
 </div>
