@@ -15,8 +15,6 @@ public interface CategoryRepository extends CrudRepository<Category, Integer> {
 
     List<Category> findBy();
 
-    Page<Category> findAll(Pageable pageable);
-
     Page<Category> findAllByParentIsNull(Pageable pageable);
 
     Page<Category> findAllByParent(Category parent, Pageable pageable);

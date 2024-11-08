@@ -248,6 +248,19 @@ public class CategoryController {
             @ApiResponse(responseCode = "200", description = "Category found"),
 
     })
+    @Operation(summary = "Return the count of pages", description = "Select all the parent matching categories" +
+            " and count pages number")
+    @RequestMapping(value="/category/getPageCount", method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> getPageCount(@RequestParam String parentName) {
+        int size = categoryService.getPageCount(parentName);
+        return ResponseEntity.ok(categoryService.createPageCountJSON(size));
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Category found"),
+
+    })
     @Operation(summary = "Return all the categories", description = "Select all the categories on database and " +
             "return it in JSON format")
     @RequestMapping(value="/category/getCategories", method = RequestMethod.GET,

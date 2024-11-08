@@ -16,6 +16,8 @@ import java.util.Optional;
 @org.springframework.stereotype.Service
 public class CategoryService {
 
+    private static final int CATEGORY_PER_PAGE = 2;
+
     private final CategoryRepository categoryRepository;
 
     public CategoryService(CategoryRepository categoryRepository) {
@@ -130,14 +132,28 @@ public class CategoryService {
     }
 
     public List<Category> getPaginatedCategories(int page, String parentName) {
+        Page<Category> categoryPage = getCategoryPage(page, parentName);
+        return categoryPage.getContent();
+    }
+
+    public int getPageCount(String parentName) {
+        Page<Category> categoryPage = getCategoryPage(0, parentName);
+        return categoryPage.getTotalPages();
+    }
+
+    public String createPageCountJSON(Integer pageCount) {
+        Map<String, Integer> jsonMap = new HashMap<>();
+        jsonMap.put("id", pageCount);
+        JSONObject jo = new JSONObject(jsonMap);
+        return jo.toString();
+    }
+
+    private Page<Category> getCategoryPage(int page, String parentName) {
         Optional<Category> optionalCategory = categoryRepository.findByName(parentName);
         Category parent = optionalCategory.orElse(null);
-        Page<Category> categoryPage;
         if (parent == null) {
-            categoryPage = categoryRepository.findAllByParentIsNull(PageRequest.of(page, 2));
-            return categoryPage.getContent();
+            return categoryRepository.findAllByParentIsNull(PageRequest.of(page, CATEGORY_PER_PAGE));
         }
-        categoryPage = categoryRepository.findAllByParent(parent, PageRequest.of(page, 2));
-        return categoryPage.getContent();
+        return categoryRepository.findAllByParent(parent, PageRequest.of(page, CATEGORY_PER_PAGE));
     }
 }
