@@ -1,10 +1,7 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {CategoryService} from './category-service.service';
-import {CategoryListComponent} from './category-list/category-list.component';
-import {Subject} from 'rxjs/Subject';
 import {Category} from './category';
-import {c} from '@angular/core/src/render3';
 
 @Component({
   selector: 'app-root',
@@ -15,7 +12,7 @@ export class AppComponent implements OnInit {
 
   title: string;
   actualParentName: string;
-
+  lastParentName: string;
   category: Category;
   categories: Category[];
 
@@ -23,6 +20,7 @@ export class AppComponent implements OnInit {
     this.title = 'CategoryList';
     this.category = new Category();
     this.actualParentName = 'None';
+    this.lastParentName = this.actualParentName;
     this.service.lastParentName.subscribe( value => {
       this.actualParentName = value;
     });
