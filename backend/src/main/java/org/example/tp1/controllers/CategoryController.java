@@ -13,8 +13,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 
 @Controller
 @CrossOrigin(origins = "http://localhost:4200")
@@ -244,6 +248,59 @@ public class CategoryController {
         List<Category> categories = categoryService.getPaginatedCategories(page, parentName);
         return ResponseEntity.ok(categoryService.createCategoriesJSON(categories));
     }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Category found"),
+
+    })
+    @Operation(summary = "Return all the categories", description = "Select all the categories on database " +
+            "filtered by criterias")
+    @RequestMapping(value="/category/search", method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> getFilteredCategories(@RequestParam Optional<Boolean> isRoot,
+        @RequestParam Optional<String> beforeDate,
+        @RequestParam Optional<String> afterDate
+    ) {
+        List<Category> categories;
+        if (isRoot.isPresent()) {
+            if (isRoot.get()) {
+                categories = categoryService.getRootCategories();
+            } else {
+                categories = categoryService.getNotRootCategories();
+            }
+        } else {
+            categories = categoryService.getCategories();
+        }
+        if (beforeDate.isPresent()) {
+            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+            Date date;
+            try {
+                date = formatter.parse(beforeDate.get());
+            } catch (ParseException e) {
+                return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(
+                        categoryService.createError(HttpStatus.NOT_FOUND,
+                                "Dates must be formatted as 'dd-mm-yyyy'")
+                );
+            }
+            categories.removeIf(category -> category.getCreationDate().compareTo(date) > 0);
+        }
+        if (afterDate.isPresent()) {
+            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+            Date date;
+            try {
+                date = formatter.parse(afterDate.get());
+            } catch (ParseException e) {
+                return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(
+                        categoryService.createError(HttpStatus.NOT_FOUND,
+                                "Dates must be formatted as 'dd-mm-yyyy'")
+                );
+            }
+            categories.removeIf(category -> category.getCreationDate().compareTo(date) < 0);
+        }
+        return ResponseEntity.ok(categoryService.createCategoriesJSON(categories));
+    }
+
+
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Category found"),

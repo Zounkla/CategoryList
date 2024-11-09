@@ -114,6 +114,14 @@ public class CategoryService {
         return categoryRepository.findBy();
     }
 
+    public List<Category> getRootCategories() {
+        return categoryRepository.findByParentIsNull();
+    }
+
+    public List<Category> getNotRootCategories() {
+        return categoryRepository.findByParentIsNotNull();
+    }
+
     public Category deleteCategory(String categoryName) {
         Optional<Category> optionalCategory = categoryRepository.findByName(categoryName);
         if (optionalCategory.isEmpty()) {
