@@ -23,4 +23,10 @@ public interface CategoryRepository extends CrudRepository<Category, Integer> {
     Optional<Category> findByName(String name);
 
     List<Category> findByParent(Category category);
+
+    default void insertIfNotExists(Category category) {
+        if (findByName(category.getName()).isEmpty()) {
+            save(category);
+        }
+    }
 }
