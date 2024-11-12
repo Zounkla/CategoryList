@@ -15,12 +15,14 @@ export class CategoryService {
   private categories = new BehaviorSubject(new Array<Category>());
   currentCategories = this.categories.asObservable();
 
-  private pages = new BehaviorSubject();
-  pageCount = this.pages.asObservable();
 
   constructor(private http: HttpClient) {
     this.categoryUrl = 'http://localhost:8080/category';
   }
+
+  public currentPage = new BehaviorSubject<number>(0);
+
+  public pages = new BehaviorSubject<number>(5);
 
   public lastParentName: BehaviorSubject<string> = new BehaviorSubject<string>('None');
 
@@ -30,9 +32,9 @@ export class CategoryService {
     return this.http.get<Category[]>(this.categoriesUrl);
   }
 
-  public findPageCategoriesCount(parentName: string): Observable<number> {
+  public findPageCategoriesCount(parentName: string) {
     let pageCountUrl = 'http://localhost:8080/category/getPageCount?parentName=' + parentName;
-    return this.http.get(pageCountUrl);
+    return this.http.get<number>(pageCountUrl);
   }
 
   public save(category: Category) {
@@ -41,6 +43,7 @@ export class CategoryService {
 
   public changeCategories(categories: Category[]) {
     this.categories.next(categories);
+    this.lastParentName.next('None');
   }
 
   public changePageCount(pageCount: number) {

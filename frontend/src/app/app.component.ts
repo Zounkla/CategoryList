@@ -12,6 +12,8 @@ export class AppComponent implements OnInit {
 
   title: string;
   actualParentName: string;
+  pageCount: number;
+  currentPage: number
 
   category: Category;
   categories: Category[];
@@ -23,9 +25,15 @@ export class AppComponent implements OnInit {
     this.service.lastParentName.subscribe( value => {
       this.actualParentName = value;
     });
+    this.pageCount = this.service.pages.value;
+    this.service.findPageCategoriesCount(this.actualParentName).subscribe(data => {
+      this.pageCount = data;
+      this.service.pages.next(data);
+    });
     this.service.findCategoriesByPageAndParent(0, this.actualParentName).subscribe(data => {
       this.categories = Object.values(data);
-    });
+    })
+    this.currentPage = this.service.currentPage.value;
   }
 
   ngOnInit() {
@@ -35,5 +43,7 @@ export class AppComponent implements OnInit {
   resetParent() {
     this.actualParentName = 'None';
     this.service.changeCategories(this.categories);
+    this.service.changePageCount(this.pageCount);
+    this.service.currentPage.next(0);
   }
 }
