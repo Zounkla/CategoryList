@@ -257,19 +257,29 @@ public class CategoryController {
             "filtered by criterias")
     @RequestMapping(value="/category/search", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> getFilteredCategories(@RequestParam Optional<Boolean> isRoot,
+    public ResponseEntity<String> getCategories(@RequestParam Optional<Boolean> isRoot,
         @RequestParam Optional<String> beforeDate,
-        @RequestParam Optional<String> afterDate
+        @RequestParam Optional<String> afterDate,
+        @RequestParam Optional<Integer> pageNumber,
+        @RequestParam Optional<String> parentName
     ) {
         List<Category> categories;
+        int nb = 0;
+        if (pageNumber.isPresent()) {
+            nb = pageNumber.get();
+        }
+        String pName = "";
+        if (parentName.isPresent()) {
+            pName = parentName.get();
+        }
         if (isRoot.isPresent()) {
             if (isRoot.get()) {
-                categories = categoryService.getRootCategories();
+                categories = categoryService.getRootPaginatedCategories(nb, pName);
             } else {
-                categories = categoryService.getNotRootCategories();
+                categories = categoryService.getNonRootPaginatedCategories(nb, pName);
             }
         } else {
-            categories = categoryService.getCategories();
+            categories = categoryService.getPaginatedCategories(nb, pName);
         }
         if (beforeDate.isPresent()) {
             SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);

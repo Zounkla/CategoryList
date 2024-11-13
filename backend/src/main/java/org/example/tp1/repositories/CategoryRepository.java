@@ -12,15 +12,17 @@ public interface CategoryRepository extends CrudRepository<Category, Integer> {
 
     List<Category> findBy();
 
-    List<Category> findByParentIsNull();
+    Page<Category> findBy(Pageable pageable);
 
-    List<Category> findByParentIsNotNull();
+    Page<Category> findByParentIsNotNull(Pageable pageable);
 
     Page<Category> findAllByParentIsNull(Pageable pageable);
 
     Page<Category> findAllByParent(Category parent, Pageable pageable);
 
     Optional<Category> findByName(String name);
+
+    Page<Category> findByParent(Category category, Pageable pageable);
 
     List<Category> findByParent(Category category);
 

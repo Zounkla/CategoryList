@@ -8,10 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @org.springframework.stereotype.Service
 public class CategoryService {
@@ -114,14 +111,6 @@ public class CategoryService {
         return categoryRepository.findBy();
     }
 
-    public List<Category> getRootCategories() {
-        return categoryRepository.findByParentIsNull();
-    }
-
-    public List<Category> getNotRootCategories() {
-        return categoryRepository.findByParentIsNotNull();
-    }
-
     public Category deleteCategory(String categoryName) {
         Optional<Category> optionalCategory = categoryRepository.findByName(categoryName);
         if (optionalCategory.isEmpty()) {
@@ -145,7 +134,17 @@ public class CategoryService {
 
     public List<Category> getPaginatedCategories(int page, String parentName) {
         Page<Category> categoryPage = getCategoryPage(page, parentName);
-        return categoryPage.getContent();
+        return new ArrayList<>(categoryPage.getContent());
+    }
+
+    public List<Category> getRootPaginatedCategories(int page, String parentName) {
+        Page<Category> categoryPage = getRootCategoryPage(page, parentName);
+        return new ArrayList<>(categoryPage.getContent());
+    }
+
+    public List<Category> getNonRootPaginatedCategories(int page, String parentName) {
+        Page<Category> categoryPage = getNonRootCategoryPage(page, parentName);
+        return new ArrayList<>(categoryPage.getContent());
     }
 
     public int getPageCount(String parentName) {
@@ -161,11 +160,31 @@ public class CategoryService {
     }
 
     private Page<Category> getCategoryPage(int page, String parentName) {
+        if (parentName.isEmpty()) {
+            return categoryRepository.findBy(PageRequest.of(page, CATEGORY_PER_PAGE));
+        }
         Optional<Category> optionalCategory = categoryRepository.findByName(parentName);
         Category parent = optionalCategory.orElse(null);
         if (parent == null) {
             return categoryRepository.findAllByParentIsNull(PageRequest.of(page, CATEGORY_PER_PAGE));
         }
         return categoryRepository.findAllByParent(parent, PageRequest.of(page, CATEGORY_PER_PAGE));
+    }
+
+    private Page<Category> getRootCategoryPage(int page, String parentName) {
+        if (!parentName.isEmpty()) {
+            return Page.empty();
+        }
+        return categoryRepository.findByParent(null, PageRequest.of(page, CATEGORY_PER_PAGE));
+    }
+
+    private Page<Category> getNonRootCategoryPage(int page, String parentName) {
+        if (parentName.isEmpty()) {
+            return categoryRepository.findByParentIsNotNull(PageRequest.of(page, CATEGORY_PER_PAGE));
+        }
+        Optional<Category> optionalCategory = categoryRepository.findByName(parentName);
+        Category parent = optionalCategory.orElse(null);
+        return categoryRepository.findByParent(parent,
+                    PageRequest.of(page, CATEGORY_PER_PAGE));
     }
 }

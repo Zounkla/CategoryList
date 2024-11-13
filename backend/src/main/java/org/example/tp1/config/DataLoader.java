@@ -27,6 +27,6 @@ public class DataLoader implements CommandLineRunner {
         categoryRepository.insertIfNotExists(new Category("Wolverine", xMen));
         categoryRepository.insertIfNotExists(new Category("Magneto", xMen));
         categoryRepository.insertIfNotExists(new Category("Iron Man", marvel));
-        categoryRepository.insertIfNotExists(new Category("Thor", DC));
+        categoryRepository.insertIfNotExists(new Category("Thor", marvel));
     }
 }
