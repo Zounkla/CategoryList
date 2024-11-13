@@ -3,7 +3,6 @@ import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs/Observable';
 import {Category} from './category';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {EventEmitter} from 'protractor';
 
 @Injectable()
 export class CategoryService {
@@ -27,13 +26,13 @@ export class CategoryService {
   public lastParentName: BehaviorSubject<string> = new BehaviorSubject<string>('None');
 
   public findCategoriesByPageAndParent(page: number, parentName: string): Observable<Category[]> {
-    this.categoriesUrl = 'http://localhost:8080/category/getPaginatedCategories?page=' + page +'' +
+    this.categoriesUrl = 'http://localhost:8080/category/search?page=' + page + '' +
       '&parentName=' + parentName;
     return this.http.get<Category[]>(this.categoriesUrl);
   }
 
   public findPageCategoriesCount(parentName: string) {
-    let pageCountUrl = 'http://localhost:8080/category/getPageCount?parentName=' + parentName;
+    const pageCountUrl = 'http://localhost:8080/category/getPageCount?parentName=' + parentName;
     return this.http.get<number>(pageCountUrl);
   }
 

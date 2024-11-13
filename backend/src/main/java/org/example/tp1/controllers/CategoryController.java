@@ -260,13 +260,13 @@ public class CategoryController {
     public ResponseEntity<String> getCategories(@RequestParam Optional<Boolean> isRoot,
         @RequestParam Optional<String> beforeDate,
         @RequestParam Optional<String> afterDate,
-        @RequestParam Optional<Integer> pageNumber,
+        @RequestParam Optional<Integer> page,
         @RequestParam Optional<String> parentName
     ) {
         List<Category> categories;
         int nb = 0;
-        if (pageNumber.isPresent()) {
-            nb = pageNumber.get();
+        if (page.isPresent()) {
+            nb = page.get();
         }
         String pName = "";
         if (parentName.isPresent()) {
