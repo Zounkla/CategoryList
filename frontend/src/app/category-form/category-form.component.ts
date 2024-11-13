@@ -34,13 +34,13 @@ export class CategoryFormComponent implements OnInit {
   }
 
   fetchData() {
-    this.categoryService.findParent('None').subscribe(data => {
+    this.categoryService.findCategoriesByPageAndParent(0, 'None').subscribe(data => {
       this.categories = Object.values(data);
     });
   }
 
   gotoCategoryList() {
-    this.router.navigate(['/category/getCategories']);
+    this.router.navigate(['/home']);
   }
 
 }

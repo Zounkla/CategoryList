@@ -320,9 +320,9 @@ public class CategoryController {
             " and count pages number")
     @RequestMapping(value="/category/getPageCount", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> getPageCount(@RequestParam String parentName) {
+    public ResponseEntity<Integer> getPageCount(@RequestParam String parentName) {
         int size = categoryService.getPageCount(parentName);
-        return ResponseEntity.ok(categoryService.createPageCountJSON(size));
+        return ResponseEntity.ok(size);
     }
 
     @ApiResponses(value = {

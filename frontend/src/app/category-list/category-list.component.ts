@@ -15,11 +15,24 @@ export class CategoryListComponent implements OnInit {
 
   parentName: string;
 
+  pageCount: number;
+
+  currentPage: number;
+
   constructor(private categoryService: CategoryService) {
     this.categoryService.currentCategories.subscribe(
       value => this.categories = value
     );
-    this.parentName = 'None';
+    this.categoryService.pages.subscribe(
+      value => this.pageCount = value
+    )
+    this.categoryService.currentPage.subscribe(
+      value => this.currentPage = value
+    )
+    this.categoryService.lastParentName.subscribe(value => {
+      this.parentName = value
+    })
+    this.currentPage = this.categoryService.currentPage.value;
   }
 
   ngOnInit() {
@@ -27,14 +40,50 @@ export class CategoryListComponent implements OnInit {
   }
 
   fetchData() {
-    this.categoryService.findParent(this.parentName).subscribe(data => {
+    this.categoryService.findCategoriesByPageAndParent(this.currentPage, this.parentName).subscribe(data => {
       this.categories = Object.values(data);
     });
+    this.categoryService.findPageCategoriesCount(this.parentName).subscribe(data => {
+      this.pageCount = data;
+      this.categoryService.pages.next(data);
+    })
+    this.categoryService.currentPage.subscribe(value =>
+        this.currentPage = value,
+    )
   }
 
   changeParentCategory(category: Category) {
     this.parentName = category.name;
+    this.categoryService.currentPage.next(0);
     this.fetchData();
     this.categoryService.lastParentName.next(category.name);
+  }
+
+  displayFirstPage() {
+    this.categoryService.currentPage.next(0);
+    this.fetchData();
+  }
+
+  displayLastPage() {
+    this.categoryService.currentPage.next(this.pageCount - 1);
+    this.fetchData();
+  }
+
+  displayPreviousPage() {
+    this.categoryService.currentPage.next(this.currentPage - 1);
+    this.fetchData();
+  }
+
+  displayNextPage() {
+    this.categoryService.currentPage.next(this.currentPage + 1);
+    this.fetchData();
+  }
+
+  isNotPossibleToDisplayPreviousPage(): boolean {
+    return this.currentPage <= 0;
+  }
+
+  isNotPossibleToDisplayNextPage(): boolean {
+    return this.currentPage >= this.pageCount - 1;
   }
 }
