@@ -238,11 +238,11 @@ public class CategoryController {
 
     })
     @Operation(summary = "Return all the categories", description = "Select all the categories on database and " +
-            "return it in JSON format and limit the result")
-    @RequestMapping(value="/category/getPaginatedCategories", method = RequestMethod.GET,
+            "return it in JSON format")
+    @RequestMapping(value="/category", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> getPaginatedCategories(@RequestParam int page, @RequestParam String parentName) {
-        List<Category> categories = categoryService.getPaginatedCategories(page, parentName);
+    public ResponseEntity<String> getPaginatedCategories() {
+        List<Category> categories = categoryService.getCategories();
         return ResponseEntity.ok(categoryService.createCategoriesJSON(categories));
     }
 

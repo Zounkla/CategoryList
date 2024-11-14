@@ -13,7 +13,7 @@ export class AppComponent implements OnInit {
   title: string;
   actualParentName: string;
   pageCount: number;
-  currentPage: number
+  currentPage: number;
 
   category: Category;
   categories: Category[];
@@ -32,7 +32,7 @@ export class AppComponent implements OnInit {
     });
     this.service.findCategoriesByPageAndParent(0, this.actualParentName).subscribe(data => {
       this.categories = Object.values(data);
-    })
+    });
     this.currentPage = this.service.currentPage.value;
   }
 

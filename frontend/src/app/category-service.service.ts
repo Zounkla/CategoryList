@@ -36,6 +36,11 @@ export class CategoryService {
     return this.http.get<number>(pageCountUrl);
   }
 
+  public findAll() {
+    const pageUrl = 'http://localhost:8080/category';
+    return this.http.get<Category[]>(pageUrl);
+  }
+
   public save(category: Category) {
     return this.http.post<Category>(this.categoryUrl, category);
   }

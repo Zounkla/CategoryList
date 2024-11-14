@@ -34,7 +34,7 @@ export class CategoryFormComponent implements OnInit {
   }
 
   fetchData() {
-    this.categoryService.findCategoriesByPageAndParent(0, 'None').subscribe(data => {
+    this.categoryService.findAll().subscribe(data => {
       this.categories = Object.values(data);
     });
   }
