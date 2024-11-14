@@ -1,8 +1,6 @@
-import {Component, Input, OnInit, Output} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Category} from '../category';
 import {CategoryService} from '../category-service.service';
-import {EventEmitter} from 'protractor';
-import {v} from '@angular/core/src/render3';
 
 @Component({
   selector: 'app-category-list',
@@ -25,13 +23,13 @@ export class CategoryListComponent implements OnInit {
     );
     this.categoryService.pages.subscribe(
       value => this.pageCount = value
-    )
+    );
     this.categoryService.currentPage.subscribe(
       value => this.currentPage = value
-    )
-    this.categoryService.lastParentName.subscribe(value => {
+    );
+    this.categoryService.lastParentName.subscribe(value =>
       this.parentName = value
-    })
+    );
     this.currentPage = this.categoryService.currentPage.value;
   }
 
@@ -46,10 +44,10 @@ export class CategoryListComponent implements OnInit {
     this.categoryService.findPageCategoriesCount(this.parentName).subscribe(data => {
       this.pageCount = data;
       this.categoryService.pages.next(data);
-    })
+    });
     this.categoryService.currentPage.subscribe(value =>
         this.currentPage = value,
-    )
+    );
   }
 
   changeParentCategory(category: Category) {

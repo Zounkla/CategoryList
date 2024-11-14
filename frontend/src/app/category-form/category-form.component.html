@@ -19,8 +19,8 @@
                id="parent"
                name="parent">
           <option value=""></option>
-          <option *ngFor="let category of categories">
-            {{category.name}}
+          <option *ngFor="let cat of categories" [selected]="cat.name == parentName">
+            {{cat.name}}
           </option>
         </select>
       </div>

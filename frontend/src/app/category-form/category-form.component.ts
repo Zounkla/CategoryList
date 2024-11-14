@@ -14,13 +14,20 @@ export class CategoryFormComponent implements OnInit {
 
   categories: Category[];
 
+  parentName: string;
+
   constructor(private route: ActivatedRoute,
               private router: Router,
               private categoryService: CategoryService) {
     this.category = new Category();
+    this.categoryService.lastParentName.subscribe(value => {
+      this.parentName = value;
+      this.category.parentName = this.parentName;
+    });
   }
 
   onSubmit() {
+
     this.categoryService.save(this.category).subscribe(() => this.gotoCategoryList());
   }
 
