@@ -15,10 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 
 @Controller
 @CrossOrigin(origins = "http://localhost:4200")
@@ -261,7 +258,10 @@ public class CategoryController {
         @RequestParam Optional<String> beforeDate,
         @RequestParam Optional<String> afterDate,
         @RequestParam Optional<Integer> page,
-        @RequestParam Optional<String> parentName
+        @RequestParam Optional<String> parentName,
+        @RequestParam Optional<Boolean> orderByName,
+        @RequestParam Optional<Boolean> orderByCreationDate,
+        @RequestParam Optional<Boolean> orderByChildrenNumber
     ) {
         List<Category> categories;
         int nb = 0;
@@ -306,6 +306,29 @@ public class CategoryController {
                 );
             }
             categories.removeIf(category -> category.getCreationDate().compareTo(date) < 0);
+        }
+        if (orderByName.isPresent() && orderByName.get()) {
+            categories.sort(Comparator.comparing(Category::getName));
+        } else {
+            if (orderByName.isPresent()) {
+                categories.sort((e1, e2) -> e2.getName().compareTo(e1.getName()));
+            }
+        }
+
+        if (orderByCreationDate.isPresent() && orderByCreationDate.get()) {
+            categories.sort(Comparator.comparing(Category::getCreationDate));
+        } else {
+            if (orderByCreationDate.isPresent()) {
+                categories.sort((e1, e2) -> e2.getCreationDate().compareTo(e1.getCreationDate()));
+            }
+        }
+
+        if (orderByChildrenNumber.isPresent() && !orderByChildrenNumber.get()) {
+            categories.sort(Comparator.comparingInt(e -> e.getChildren().size()));
+        } else {
+            if (orderByChildrenNumber.isPresent()) {
+                categories.sort((e1, e2) -> e2.getChildren().size() - e1.getChildren().size());
+            }
         }
         return ResponseEntity.ok(categoryService.createCategoriesJSON(categories));
     }

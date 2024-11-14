@@ -30,6 +30,9 @@ public class Category {
         this.children = new ArrayList<>();
         this.parent = parent;
         this.creationDate = new Date();
+        if (parent != null) {
+            this.parent.getChildren().add(this);
+        }
     }
 
     protected Category() {

@@ -1,5 +1,7 @@
 package org.example.tp1.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.tp1.entities.Category;
 import org.example.tp1.repositories.CategoryRepository;
 import org.json.JSONObject;
@@ -42,9 +44,9 @@ public class CategoryService {
     }
 
     public String createCategoriesJSON(List<Category> categories) {
-        Map<String, Map<String, String>> jsonMap = new HashMap<>();
+        HashMap<String, Map<String, String>> jsonMap = new LinkedHashMap<>();
         for (Category category : categories) {
-            Map<String, String> map = new HashMap<>();
+            SortedMap<String, String> map = new TreeMap<>();
             map.put("id", String.valueOf(category.getId()));
             map.put("name", category.getName());
             map.put("children", category.getChildrenNames().toString());
@@ -53,8 +55,12 @@ public class CategoryService {
             map.put("date", category.getCreationDate().toString());
             jsonMap.put(category.getName(), map);
         }
-        JSONObject jo = new JSONObject(jsonMap);
-        return jo.toString();
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.writeValueAsString(jsonMap);
+        } catch (JsonProcessingException e) {
+            return "";
+        }
     }
 
     public boolean categoryAlreadyExists(String name) {
@@ -65,6 +71,7 @@ public class CategoryService {
     public Category insertCategory(String name, Category parent) {
         Category category = new Category(name, parent);
         categoryRepository.save(category);
+        categoryRepository.save(parent);
         return category;
     }
 
