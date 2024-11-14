@@ -1,12 +1,9 @@
 package org.example.tp1.repositories;
 
 import org.example.tp1.entities.Category;
-import org.example.tp1.services.CategoryService;
-import org.hibernate.service.spi.InjectService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
