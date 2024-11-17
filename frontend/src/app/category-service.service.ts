@@ -53,4 +53,9 @@ export class CategoryService {
   public changePageCount(pageCount: number) {
     this.pages.next(pageCount);
   }
+
+  public deleteCategory(categoryName: string) {
+    const deleteCategoryUrl = 'localhost:8080/category/deleteCategory?categoryName=' + categoryName
+    return this.http.delete(deleteCategoryUrl);
+  }
 }

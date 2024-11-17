@@ -46,4 +46,8 @@ export class AppComponent implements OnInit {
     this.service.changePageCount(this.pageCount);
     this.service.currentPage.next(0);
   }
+
+  deleteCurrentCategory() {
+    this.service.deleteCategory(this.actualParentName).subscribe(() => this.resetParent());
+  }
 }

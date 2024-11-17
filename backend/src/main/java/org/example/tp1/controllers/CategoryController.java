@@ -369,30 +369,12 @@ public class CategoryController {
 
     })
     @Operation(summary = "Delete a category", description = "Delete a category from database")
-    @RequestMapping(value="/category/deleteCategory", method = RequestMethod.DELETE,
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> deleteCategory(@RequestBody String paramJSON) {
-        JSONObject jsonObject = new JSONObject(paramJSON);
-
-        if (jsonObject.isNull("name")) {
-            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(
-                    categoryService.createError(HttpStatus.PRECONDITION_FAILED,
-                            "A name is required")
-            );
-        }
-
-        String name = jsonObject.getString("name");
-
-        if (name == null || name.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(
-                    categoryService.createError(HttpStatus.PRECONDITION_FAILED,
-                            "A name is required")
-            );
-        }
-
+    @CrossOrigin(origins = "http://localhost:4200")
+    @DeleteMapping(value="/category/deleteCategory")
+    public ResponseEntity<String> deleteCategory(@RequestParam String categoryName) {
+        System.out.println(categoryName);
         try {
-            Category category = categoryService.deleteCategory(name);
+            Category category = categoryService.deleteCategory(categoryName);
             return ResponseEntity.ok(categoryService.createCategoryJSON(category));
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
