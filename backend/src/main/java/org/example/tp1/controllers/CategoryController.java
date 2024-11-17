@@ -286,27 +286,27 @@ public class CategoryController {
             categories = categoryService.getPaginatedCategories(nb, pName);
         }
         if (beforeDate.isPresent()) {
-            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
             Date date;
             try {
                 date = formatter.parse(beforeDate.get());
             } catch (ParseException e) {
                 return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(
                         categoryService.createError(HttpStatus.NOT_FOUND,
-                                "Dates must be formatted as 'dd-mm-yyyy'")
+                                "Dates must be formatted as 'yyyy-MM-dd'")
                 );
             }
             categories.removeIf(category -> category.getCreationDate().compareTo(date) > 0);
         }
         if (afterDate.isPresent()) {
-            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
             Date date;
             try {
                 date = formatter.parse(afterDate.get());
             } catch (ParseException e) {
                 return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(
                         categoryService.createError(HttpStatus.NOT_FOUND,
-                                "Dates must be formatted as 'dd-mm-yyyy'")
+                                "Dates must be formatted as 'yyyy-MM-dd'")
                 );
             }
             categories.removeIf(category -> category.getCreationDate().compareTo(date) < 0);

@@ -16,6 +16,36 @@
               <a (click)='resetParent()' routerLink="/home" class="btn btn-info">Home</a>
             </li>
           </ul>
+          <ul>
+            <li class="list-inline-item">
+              <select>
+                <option value="None">All categories</option>
+                <option value="true">Root categories</option>
+                <option value="false">Non-root categories</option>
+              </select>
+            </li>
+            <li class="list-inline-item">
+              <span class="text-white">Before: </span>
+              <input type="date" [(ngModel)]="dateBefore"
+                     (change)="changeBeforeDate($event.target.value)"/>
+            </li>
+            <li class="list-inline-item">
+              <span class="text-white">After: </span> <input type="date" value="dateAfter"/>
+            </li>
+          </ul>
+          <ul>
+            <li>
+              <span class="text-white">Order by name: </span><input type="checkbox" value="orderName"/>
+            </li>
+            <li>
+              <span class="text-white">Order by creation date: </span>
+              <input type="checkbox" value="orderDate"/>
+            </li>
+            <li>
+              <span class="text-white">Order by number of children: </span>
+              <input type="checkbox" value="orderChildren"/>
+            </li>
+          </ul>
         </div>
       </div>
       <router-outlet></router-outlet>

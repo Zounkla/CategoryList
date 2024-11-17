@@ -11,12 +11,17 @@ export class CategoryService {
 
   private categoriesUrl: string;
 
+  private isRoot: string;
+
+  private beforeDate: string;
   private categories = new BehaviorSubject(new Array<Category>());
   currentCategories = this.categories.asObservable();
 
 
   constructor(private http: HttpClient) {
     this.categoryUrl = 'http://localhost:8080/category';
+    this.isRoot = 'None';
+    this.beforeDate = '';
   }
 
   public currentPage = new BehaviorSubject<number>(0);
@@ -28,8 +33,24 @@ export class CategoryService {
   public creationDate: BehaviorSubject<Date> = new BehaviorSubject<Date>();
 
   public findCategoriesByPageAndParent(page: number, parentName: string): Observable<Category[]> {
+  public changeIsRoot(newValue: string) {
+    this.isRoot = newValue;
+  }
+  public changeBeforeDate(newValue: string) {
+    this.beforeDate = newValue;
+    this.findCategoriesByPageAndParent(this.lastParentName.getValue());
+  }
+
+  public findCategoriesByPageAndParent(parentName: string): Observable<Category[]> {
+    const page: number = this.currentPage.getValue();
     this.categoriesUrl = 'http://localhost:8080/category/search?page=' + page + '' +
       '&parentName=' + parentName;
+    if (this.isRoot !== 'None') {
+      this.categoriesUrl += '&isRoot=' + this.isRoot;
+    }
+    if (this.beforeDate !== '') {
+      this.categoriesUrl += '&beforeDate=' + this.beforeDate;
+    }
     return this.http.get<Category[]>(this.categoriesUrl);
   }
 
@@ -49,8 +70,12 @@ export class CategoryService {
   }
 
   public changeCategories(categories: Category[]) {
-    this.categories.next(categories);
     this.lastParentName.next('None');
+    this.categories.next(categories);
+  }
+
+  public triggerChangeCategoryList() {
+    this.categories.next();
   }
 
   public changePageCount(pageCount: number) {

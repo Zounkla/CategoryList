@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Category} from '../category';
 import {CategoryService} from '../category-service.service';
+import {Subscription} from 'rxjs/Subscription';
 
 @Component({
   selector: 'app-category-list',
@@ -8,6 +9,8 @@ import {CategoryService} from '../category-service.service';
   styleUrls: ['./category-list.component.css'],
 })
 export class CategoryListComponent implements OnInit {
+
+  private subscriber: Subscription = new Subscription();
 
   categories: Category[];
 
@@ -34,11 +37,15 @@ export class CategoryListComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.subscriber = this.categoryService.currentCategories.subscribe(
+      () => {this.fetchData();
+      }
+    );
     this.fetchData();
   }
 
   fetchData() {
-    this.categoryService.findCategoriesByPageAndParent(this.currentPage, this.parentName).subscribe(data => {
+    this.categoryService.findCategoriesByPageAndParent(this.parentName).subscribe(data => {
       this.categories = Object.values(data);
     });
     this.categoryService.findPageCategoriesCount(this.parentName).subscribe(data => {
