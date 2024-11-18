@@ -23,6 +23,8 @@ export class CategoryFormComponent implements OnInit {
     this.categoryService.lastParentName.subscribe(value => {
       this.parentName = value;
       this.category.parentName = this.parentName;
+      this.category.oldParentName = this.parentName;
+      this.category.oldName = this.category.parentName;
     });
   }
 
@@ -31,7 +33,7 @@ export class CategoryFormComponent implements OnInit {
     this.categoryService.save(this.category).subscribe(() => this.gotoCategoryList());
   }
 
-  onChange(newValue) {
+  onParentChange(newValue) {
     this.category.parentName = newValue;
   }
 

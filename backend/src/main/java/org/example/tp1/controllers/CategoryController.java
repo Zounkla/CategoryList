@@ -59,11 +59,15 @@ public class CategoryController {
             );
         }
 
+        String oldName = jsonObject.getString("oldName");
+        if (oldName != null) {
+            Category category = categoryService.updateName(oldName, name);
+            return ResponseEntity.ok(categoryService.createCategoryJSON(category));
+        }
+
         if (categoryService.categoryAlreadyExists(name)) {
-            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(
-                    categoryService.createError(HttpStatus.PRECONDITION_FAILED,
-                            "This category already exists")
-            );
+            Category category = categoryService.updateParent(parentName, name);
+            return ResponseEntity.ok(categoryService.createCategoryJSON(category));
         }
 
         if (!parentName.isEmpty() && !categoryService.categoryAlreadyExists(parentName)) {

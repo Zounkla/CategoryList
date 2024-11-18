@@ -42,6 +42,7 @@ export class CategoryService {
   }
 
   public save(category: Category) {
+    console.log(category);
     return this.http.post<Category>(this.categoryUrl, category);
   }
 

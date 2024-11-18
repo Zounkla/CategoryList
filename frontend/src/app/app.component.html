@@ -9,7 +9,7 @@
           <h2 class="card-title text-center text-white py-3">{{ title }}</h2>
           <ul class="text-center list-inline py-3">
             <li class="list-inline-item">
-              <a (click)='resetParent()' class="btn btn-info">Home</a>
+              <a (click)='resetParent()' routerLink="/home" class="btn btn-info">Home</a>
             </li>
           </ul>
         </div>
@@ -21,6 +21,7 @@
         <li class="list-inline-item">
           <a routerLink="/category" class="btn btn-info m-1">Add Category</a>
           <button class="btn btn-danger m-1" (click)="deleteCurrentCategory()">Delete Current Category</button>
+          <button routerLink="/category" class="btn btn-warning m-1">Modify Current Category</button>
         </li>
       </ul>
     </div>
