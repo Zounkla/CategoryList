@@ -8,8 +8,8 @@
       </thead>
       <tbody>
       <tr *ngFor="let category of categories">
-        <td>
-          <button type="button" (click)="changeParentCategory(category)">
+        <td class="d-grid">
+          <button type="button" class="btn border" (click)="changeParentCategory(category)">
                      {{ category.name }}
           </button>
         </td>
