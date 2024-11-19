@@ -1,9 +1,13 @@
 <div class="container-fluid">
   <div class="row">
-    <div class="col-1">
-      Current parent category: <p class="text-break"> {{ actualParentName }} </p>
+    <div class="col-2 border">
+      <h1 class="fs-3">Category Information</h1>
+      <ul>
+        <li><p>Current category : {{ actualParentName }}</p></li>
+        <li><p>Creation Date : {{creationDate | date : "medium"}} </p></li>
+      </ul>
     </div>
-    <div class="col-9">
+    <div class="col-8 border">
       <div class="card bg-dark my-5">
         <div class="card-body">
           <h2 class="card-title text-center text-white py-3">{{ title }}</h2>
@@ -16,7 +20,7 @@
       </div>
       <router-outlet></router-outlet>
     </div>
-    <div class="col-2">
+    <div class="col-2 border">
       <ul class="text-center list-inline py-3">
         <li class="list-inline-item">
           <a routerLink="/category" class="btn btn-info m-1">Add Category</a>

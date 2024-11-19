@@ -25,6 +25,7 @@ export class CategoryFormComponent implements OnInit {
       this.category.parentName = this.parentName;
       this.category.oldParentName = this.parentName;
       this.category.oldName = this.category.parentName;
+      this.category.date = "";
     });
   }
 

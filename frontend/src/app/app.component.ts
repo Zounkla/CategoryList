@@ -14,6 +14,7 @@ export class AppComponent implements OnInit {
   actualParentName: string;
   pageCount: number;
   currentPage: number;
+  creationDate: Date;
 
   category: Category;
   categories: Category[];
@@ -22,6 +23,7 @@ export class AppComponent implements OnInit {
     this.title = 'CategoryList';
     this.category = new Category();
     this.actualParentName = 'None';
+    this.creationDate = new Date("");
     this.service.lastParentName.subscribe( value => {
       this.actualParentName = value;
     });
@@ -33,6 +35,9 @@ export class AppComponent implements OnInit {
     this.service.findCategoriesByPageAndParent(0, this.actualParentName).subscribe(data => {
       this.categories = Object.values(data);
     });
+    this.service.creationDate.subscribe(data => {
+      this.creationDate = data;
+    })
     this.currentPage = this.service.currentPage.value;
   }
 
@@ -45,6 +50,7 @@ export class AppComponent implements OnInit {
     this.service.changeCategories(this.categories);
     this.service.changePageCount(this.pageCount);
     this.service.currentPage.next(0);
+    this.service.creationDate.next();
   }
 
   deleteCurrentCategory() {

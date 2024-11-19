@@ -55,6 +55,7 @@ export class CategoryListComponent implements OnInit {
     this.categoryService.currentPage.next(0);
     this.fetchData();
     this.categoryService.lastParentName.next(category.name);
+    this.categoryService.creationDate.next(new Date(category.date));
   }
 
   displayFirstPage() {

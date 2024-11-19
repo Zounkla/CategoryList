@@ -3,4 +3,5 @@ export class Category {
   oldName: string;
   parentName: string;
   oldParentName: string;
+  date: Date;
 }

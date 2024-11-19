@@ -25,6 +25,8 @@ export class CategoryService {
 
   public lastParentName: BehaviorSubject<string> = new BehaviorSubject<string>('None');
 
+  public creationDate: BehaviorSubject<Date> = new BehaviorSubject<Date>();
+
   public findCategoriesByPageAndParent(page: number, parentName: string): Observable<Category[]> {
     this.categoriesUrl = 'http://localhost:8080/category/search?page=' + page + '' +
       '&parentName=' + parentName;
