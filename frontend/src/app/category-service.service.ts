@@ -14,6 +14,10 @@ export class CategoryService {
   private isRoot: string;
 
   private beforeDate: string;
+  private afterDate: string;
+  private orderName: string;
+  private orderDate: string;
+  private orderChildren: string;
   private categories = new BehaviorSubject(new Array<Category>());
   currentCategories = this.categories.asObservable();
 
@@ -22,6 +26,10 @@ export class CategoryService {
     this.categoryUrl = 'http://localhost:8080/category';
     this.isRoot = 'None';
     this.beforeDate = '';
+    this.afterDate = '';
+    this.orderName = 'None';
+    this.orderDate = 'None';
+    this.orderChildren = 'None';
   }
 
   public currentPage = new BehaviorSubject<number>(0);
@@ -37,7 +45,22 @@ export class CategoryService {
   }
   public changeBeforeDate(newValue: string) {
     this.beforeDate = newValue;
-    this.findCategoriesByPageAndParent(this.lastParentName.getValue());
+  }
+
+  public changeAfterDate(newValue: string) {
+    this.afterDate = newValue;
+  }
+
+  public changeOrderName(newValue: string) {
+    this.orderName = newValue;
+  }
+
+  public changeOrderDate(newValue: string) {
+    this.orderDate = newValue;
+  }
+
+  public changeOrderChildren(newValue: string) {
+    this.orderChildren = newValue;
   }
 
   public findCategoriesByPageAndParent(parentName: string): Observable<Category[]> {
@@ -50,6 +73,19 @@ export class CategoryService {
     if (this.beforeDate !== '') {
       this.categoriesUrl += '&beforeDate=' + this.beforeDate;
     }
+    if (this.afterDate !== '') {
+      this.categoriesUrl += '&afterDate=' + this.afterDate;
+    }
+    if (this.orderName !== 'None') {
+      this.categoriesUrl += '&orderByName=' + this.orderName;
+    }
+    if (this.orderDate !== 'None') {
+      this.categoriesUrl += '&orderByCreationDate=' + this.orderDate;
+    }
+    if (this.orderChildren !== 'None') {
+      this.categoriesUrl += '&orderByChildrenNumber=' + this.orderChildren;
+    }
+    console.log(this.categoriesUrl);
     return this.http.get<Category[]>(this.categoriesUrl);
   }
 
@@ -74,7 +110,7 @@ export class CategoryService {
   }
 
   public triggerChangeCategoryList() {
-    // this.categories.next();
+    this.categories.next(this.categories.value);
   }
 
   public changePageCount(pageCount: number) {
@@ -82,7 +118,7 @@ export class CategoryService {
   }
 
   public deleteCategory(categoryName: string) {
-    const deleteCategoryUrl = 'http://localhost:8080/category/deleteCategory?categoryName=' + categoryName
+    const deleteCategoryUrl = 'http://localhost:8080/category/deleteCategory?categoryName=' + categoryName;
     return this.http.delete(deleteCategoryUrl);
   }
 }

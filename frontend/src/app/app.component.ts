@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {CategoryService} from './category-service.service';
 import {Category} from './category';
@@ -11,8 +11,12 @@ import {Category} from './category';
 })
 export class AppComponent implements OnInit {
 
-  dateBefore: string = '';
-
+  isRoot = 'None';
+  dateBefore = '';
+  dateAfter = '';
+  orderName = 'None';
+  orderDate = 'None';
+  orderChildren = 'None';
   title: string;
   actualParentName: string;
   pageCount: number;
@@ -51,15 +55,45 @@ export class AppComponent implements OnInit {
   resetParent() {
     this.actualParentName = 'None';
     this.dateBefore = '';
+    this.dateAfter = '';
+    this.orderName = 'None';
+    this.orderDate = 'None';
+    this.orderChildren = 'None';
     this.service.currentPage.next(0);
     this.service.changePageCount(this.pageCount);
     this.service.changeCategories(this.categories);
     this.changeBeforeDate(this.dateBefore);
+    this.changeAfterDate(this.dateAfter);
     this.service.creationDate.next(new Date());
+  }
+
+  changeIsRoot(value: string) {
+    this.service.changeIsRoot(value);
+    this.service.triggerChangeCategoryList();
   }
 
   changeBeforeDate(value: string) {
     this.service.changeBeforeDate(value);
+    this.service.triggerChangeCategoryList();
+  }
+
+  changeAfterDate(value: string) {
+    this.service.changeAfterDate(value);
+    this.service.triggerChangeCategoryList();
+  }
+
+  changeOrderName(value: string) {
+    this.service.changeOrderName(value);
+    this.service.triggerChangeCategoryList();
+  }
+
+  changeOrderDate(value: string) {
+    this.service.changeOrderDate(value);
+    this.service.triggerChangeCategoryList();
+  }
+
+  changeOrderChildren(value: string) {
+    this.service.changeOrderChildren(value);
     this.service.triggerChangeCategoryList();
   }
 

@@ -18,7 +18,8 @@
           </ul>
           <ul>
             <li class="list-inline-item">
-              <select>
+              <select [(ngModel)]="isRoot"
+                      (change)="changeIsRoot($event.target.value)">
                 <option value="None">All categories</option>
                 <option value="true">Root categories</option>
                 <option value="false">Non-root categories</option>
@@ -30,20 +31,38 @@
                      (change)="changeBeforeDate($event.target.value)"/>
             </li>
             <li class="list-inline-item">
-              <span class="text-white">After: </span> <input type="date" value="dateAfter"/>
+              <span class="text-white">After: </span>
+              <input type="date" [(ngModel)]="dateAfter"
+                     (change)="changeAfterDate($event.target.value)"/>
             </li>
           </ul>
           <ul>
             <li>
-              <span class="text-white">Order by name: </span><input type="checkbox" value="orderName"/>
+              <span class="text-white">Order by name: </span>
+              <select [(ngModel)]="orderName"
+                      (change)="changeOrderName($event.target.value)">
+                <option value="None">No filter</option>
+                <option value="true">Yes</option>
+                <option value="false">No</option>
+              </select>
             </li>
             <li>
               <span class="text-white">Order by creation date: </span>
-              <input type="checkbox" value="orderDate"/>
+              <select [(ngModel)]="orderDate"
+                      (change)="changeOrderDate($event.target.value)">
+                <option value="None">No filter</option>
+                <option value="true">Yes</option>
+                <option value="false">No</option>
+              </select>
             </li>
             <li>
               <span class="text-white">Order by number of children: </span>
-              <input type="checkbox" value="orderChildren"/>
+              <select [(ngModel)]="orderChildren"
+                      (change)="changeOrderChildren($event.target.value)">
+                <option value="None">No filter</option>
+                <option value="true">Yes</option>
+                <option value="false">No</option>
+              </select>
             </li>
           </ul>
         </div>
