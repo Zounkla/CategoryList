@@ -30,9 +30,8 @@ export class CategoryService {
 
   public lastParentName: BehaviorSubject<string> = new BehaviorSubject<string>('None');
 
-  public creationDate: BehaviorSubject<Date> = new BehaviorSubject<Date>();
+  public creationDate: BehaviorSubject<Date> = new BehaviorSubject<Date>(new Date());
 
-  public findCategoriesByPageAndParent(page: number, parentName: string): Observable<Category[]> {
   public changeIsRoot(newValue: string) {
     this.isRoot = newValue;
   }
@@ -75,7 +74,7 @@ export class CategoryService {
   }
 
   public triggerChangeCategoryList() {
-    this.categories.next();
+    // this.categories.next();
   }
 
   public changePageCount(pageCount: number) {

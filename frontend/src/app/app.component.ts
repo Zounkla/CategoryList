@@ -26,7 +26,7 @@ export class AppComponent implements OnInit {
     this.title = 'CategoryList';
     this.category = new Category();
     this.actualParentName = 'None';
-    this.creationDate = new Date("");
+    this.creationDate = new Date('');
     this.service.lastParentName.subscribe( value => {
       this.actualParentName = value;
     });
@@ -40,7 +40,7 @@ export class AppComponent implements OnInit {
     });
     this.service.creationDate.subscribe(data => {
       this.creationDate = data;
-    })
+    });
     this.currentPage = this.service.currentPage.value;
   }
 
@@ -55,12 +55,12 @@ export class AppComponent implements OnInit {
     this.service.changePageCount(this.pageCount);
     this.service.changeCategories(this.categories);
     this.changeBeforeDate(this.dateBefore);
+    this.service.creationDate.next(new Date());
   }
 
   changeBeforeDate(value: string) {
     this.service.changeBeforeDate(value);
     this.service.triggerChangeCategoryList();
-    this.service.creationDate.next();
   }
 
   deleteCurrentCategory() {
