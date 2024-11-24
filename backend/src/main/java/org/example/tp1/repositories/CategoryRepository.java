@@ -3,12 +3,14 @@ package org.example.tp1.repositories;
 import org.example.tp1.entities.Category;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface CategoryRepository extends CrudRepository<Category, Integer> {
+public interface CategoryRepository extends JpaRepository<Category, Integer> {
 
     List<Category> findBy();
 
@@ -26,13 +28,6 @@ public interface CategoryRepository extends CrudRepository<Category, Integer> {
 
     List<Category> findByParent(Category category);
 
-    default void insertIfNotExists(Category category) {
-        if (findByName(category.getName()).isEmpty()) {
-            save(category);
-        }
-    }
-
-    default void saveAllIfNotExist(List<Category> categories) {
-        categories.forEach(this::insertIfNotExists);
-    }
+    @Query("SELECT c FROM Category  c WHERE c.name IN :names")
+    Page<Category> findAllByName(List<String> names, Pageable pageable);
 }

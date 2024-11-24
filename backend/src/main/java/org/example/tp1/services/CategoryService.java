@@ -43,8 +43,10 @@ public class CategoryService {
         return jo.toString();
     }
 
-    public String createCategoriesJSON(List<Category> categories) {
-        HashMap<String, Map<String, String>> jsonMap = new LinkedHashMap<>();
+    public String createCategoriesJSON(List<Category> categories, int size) {
+        HashMap<String, Map
+                <String, Map<String, String>>> jsonMap = new LinkedHashMap<>();
+        HashMap<String, Map<String, String>> categoriesMap = new LinkedHashMap<>();
         for (Category category : categories) {
             SortedMap<String, String> map = new TreeMap<>();
             map.put("id", String.valueOf(category.getId()));
@@ -53,11 +55,15 @@ public class CategoryService {
             Category parent = category.getParent();
             map.put("parent", parent == null ? "null" : parent.getName());
             map.put("date", category.getCreationDate().toString());
-            jsonMap.put(category.getName(), map);
+            categoriesMap.put(category.getName(), map);
         }
+        jsonMap.put("categories", categoriesMap);
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            return objectMapper.writeValueAsString(jsonMap);
+            StringBuilder result = new StringBuilder(objectMapper.writeValueAsString(jsonMap));
+            result.deleteCharAt(result.length() - 1);
+            result.append(",\n\"pageCount\": \"").append((int) Math.ceil((double) size / CATEGORY_PER_PAGE)).append("\"").append("}");
+            return result.toString();
         } catch (JsonProcessingException e) {
             return "";
         }
@@ -135,35 +141,26 @@ public class CategoryService {
         return category;
     }
 
+    public List<Category> getByPage(List<Category> categories, int pageNb) {
+        Page<Category> categoryPage = getCategoriesPage(pageNb, categories);
+        return new ArrayList<>(categoryPage.getContent());
+    }
+
+    private Page<Category> getCategoriesPage(int page, List<Category> categories) {
+        List<String> names = new ArrayList<>();
+        for (Category category : categories) {
+            names.add(category.getName());
+        }
+        return categoryRepository.findAllByName(names, PageRequest.of(page, CATEGORY_PER_PAGE));
+    }
+
     public List<Category> getChildren(Category category) {
         return this.categoryRepository.findByParent(category);
-    }
-
-    public List<Category> getPaginatedCategories(int page, String parentName) {
-        Page<Category> categoryPage = getCategoryPage(page, parentName);
-        return new ArrayList<>(categoryPage.getContent());
-    }
-
-    public List<Category> getRootPaginatedCategories(int page, String parentName) {
-        Page<Category> categoryPage = getRootCategoryPage(page, parentName);
-        return new ArrayList<>(categoryPage.getContent());
-    }
-
-    public List<Category> getNonRootPaginatedCategories(int page, String parentName) {
-        Page<Category> categoryPage = getNonRootCategoryPage(page, parentName);
-        return new ArrayList<>(categoryPage.getContent());
     }
 
     public int getPageCount(String parentName) {
         Page<Category> categoryPage = getCategoryPage(0, parentName);
         return categoryPage.getTotalPages();
-    }
-
-    public String createPageCountJSON(Integer pageCount) {
-        Map<String, Integer> jsonMap = new HashMap<>();
-        jsonMap.put("id", pageCount);
-        JSONObject jo = new JSONObject(jsonMap);
-        return jo.toString();
     }
 
     private Page<Category> getCategoryPage(int page, String parentName) {
@@ -176,22 +173,5 @@ public class CategoryService {
             return categoryRepository.findAllByParentIsNull(PageRequest.of(page, CATEGORY_PER_PAGE));
         }
         return categoryRepository.findAllByParent(parent, PageRequest.of(page, CATEGORY_PER_PAGE));
-    }
-
-    private Page<Category> getRootCategoryPage(int page, String parentName) {
-        if (!parentName.isEmpty()) {
-            return Page.empty();
-        }
-        return categoryRepository.findByParent(null, PageRequest.of(page, CATEGORY_PER_PAGE));
-    }
-
-    private Page<Category> getNonRootCategoryPage(int page, String parentName) {
-        if (parentName.isEmpty()) {
-            return categoryRepository.findByParentIsNotNull(PageRequest.of(page, CATEGORY_PER_PAGE));
-        }
-        Optional<Category> optionalCategory = categoryRepository.findByName(parentName);
-        Category parent = optionalCategory.orElse(null);
-        return categoryRepository.findByParent(parent,
-                    PageRequest.of(page, CATEGORY_PER_PAGE));
     }
 }

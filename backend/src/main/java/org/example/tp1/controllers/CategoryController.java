@@ -6,6 +6,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.example.tp1.entities.Category;
 import org.example.tp1.services.CategoryService;
 import org.json.JSONObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -241,19 +243,6 @@ public class CategoryController {
             @ApiResponse(responseCode = "200", description = "Category found"),
 
     })
-    @Operation(summary = "Return all the categories", description = "Select all the categories on database and " +
-            "return it in JSON format")
-    @RequestMapping(value="/category", method = RequestMethod.GET,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> getPaginatedCategories() {
-        List<Category> categories = categoryService.getCategories();
-        return ResponseEntity.ok(categoryService.createCategoriesJSON(categories));
-    }
-
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Category found"),
-
-    })
     @Operation(summary = "Return all the categories", description = "Select all the categories on database " +
             "filtered by criterias")
     @RequestMapping(value="/category/search", method = RequestMethod.GET,
@@ -267,46 +256,45 @@ public class CategoryController {
         @RequestParam Optional<Boolean> orderByCreationDate,
         @RequestParam Optional<Boolean> orderByChildrenNumber
     ) {
-        List<Category> categories;
-        int nb = 0;
+        List<Category> categories = this.categoryService.getCategories();
+        int pageNb = 0;
         if (page.isPresent()) {
-            nb = page.get();
-        }
-        String pName = "";
-        if (parentName.isPresent()) {
-            pName = parentName.get();
+            pageNb = page.get();
         }
         if (isRoot.isPresent()) {
             if (isRoot.get()) {
-                categories = categoryService.getRootPaginatedCategories(nb, pName);
+                categories.removeIf(category -> category.getParent() != null);
             } else {
-                categories = categoryService.getNonRootPaginatedCategories(nb, pName);
+                categories.removeIf(category -> category.getParent() == null);
             }
-        } else {
-            categories = categoryService.getPaginatedCategories(nb, pName);
         }
+        if (parentName.isPresent()) {
+            categories.removeIf(category -> category.getParent() == null
+            || !category.getParent().getName().equals(parentName.get()));
+        }
+
         if (beforeDate.isPresent()) {
-            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
             Date date;
             try {
                 date = formatter.parse(beforeDate.get());
             } catch (ParseException e) {
                 return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(
                         categoryService.createError(HttpStatus.NOT_FOUND,
-                                "Dates must be formatted as 'dd-mm-yyyy'")
+                                "Dates must be formatted as 'yyyy-MM-dd'")
                 );
             }
             categories.removeIf(category -> category.getCreationDate().compareTo(date) > 0);
         }
         if (afterDate.isPresent()) {
-            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
             Date date;
             try {
                 date = formatter.parse(afterDate.get());
             } catch (ParseException e) {
                 return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(
                         categoryService.createError(HttpStatus.NOT_FOUND,
-                                "Dates must be formatted as 'dd-mm-yyyy'")
+                                "Dates must be formatted as 'yyyy-MM-dd'")
                 );
             }
             categories.removeIf(category -> category.getCreationDate().compareTo(date) < 0);
@@ -334,7 +322,9 @@ public class CategoryController {
                 categories.sort((e1, e2) -> e2.getChildren().size() - e1.getChildren().size());
             }
         }
-        return ResponseEntity.ok(categoryService.createCategoriesJSON(categories));
+        int numberOfCategories = categories.size();
+        categories = this.categoryService.getByPage(categories, pageNb);
+        return ResponseEntity.ok(categoryService.createCategoriesJSON(categories, numberOfCategories));
     }
 
 
@@ -362,7 +352,7 @@ public class CategoryController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> getCategories() {
         List<Category> categories = categoryService.getCategories();
-        return ResponseEntity.ok(categoryService.createCategoriesJSON(categories));
+        return ResponseEntity.ok(categoryService.createCategoriesJSON(categories, categories.size()));
     }
 
 
@@ -419,6 +409,6 @@ public class CategoryController {
            Category category = categoryService.getCategory(name);
            children = categoryService.getChildren(category);
         }
-        return ResponseEntity.ok(categoryService.createCategoriesJSON(children));
+        return ResponseEntity.ok(categoryService.createCategoriesJSON(children, children.size()));
     }
 }

@@ -18,37 +18,40 @@ public class DataLoader implements CommandLineRunner {
     }
     @Override
     public void run(String... args) {
-        Category DC = new Category("DC", null);
-        Category marvel = new Category("Marvel", null);
-        categoryRepository.insertIfNotExists(DC);
-        categoryRepository.insertIfNotExists(marvel);
-        Category batman = new Category("Batman", DC);
-        categoryRepository.insertIfNotExists(batman);
-        Category superman = new Category("Superman", DC);
-        categoryRepository.insertIfNotExists(superman);
-        Category wonderWoman = new Category("Wonder Woman", DC);
-        categoryRepository.insertIfNotExists(wonderWoman);
-        Category xMen = new Category("X-MEN", marvel);
-        categoryRepository.insertIfNotExists(xMen);
-        Category wolverine = new Category("Wolverine", xMen);
-        categoryRepository.insertIfNotExists(wolverine);
-        Category magneto = new Category("Magneto", xMen);
-        categoryRepository.insertIfNotExists(magneto);
-        Category ironMan = new Category("Iron Man", marvel);
-        categoryRepository.insertIfNotExists(ironMan);
-        Category thor = new Category("Thor", marvel);
-        categoryRepository.insertIfNotExists(thor);
-        List<Category> categoryList = new ArrayList<>();
-        categoryList.add(DC);
-        categoryList.add(marvel);
-        categoryList.add(batman);
-        categoryList.add(superman);
-        categoryList.add(wonderWoman);
-        categoryList.add(xMen);
-        categoryList.add(wolverine);
-        categoryList.add(magneto);
-        categoryList.add(ironMan);
-        categoryList.add(DC);
-        categoryRepository.saveAllIfNotExist(categoryList);
+        if (categoryRepository.findBy().isEmpty()) {
+            Category DC = new Category("DC", null);
+            Category marvel = new Category("Marvel", null);
+            categoryRepository.save(DC);
+            categoryRepository.save(marvel);
+            Category batman = new Category("Batman", DC);
+            categoryRepository.save(batman);
+            Category superman = new Category("Superman", DC);
+            categoryRepository.save(superman);
+            Category wonderWoman = new Category("Wonder Woman", DC);
+            categoryRepository.save(wonderWoman);
+            Category xMen = new Category("X-MEN", marvel);
+            categoryRepository.save(xMen);
+            Category wolverine = new Category("Wolverine", xMen);
+            categoryRepository.save(wolverine);
+            Category magneto = new Category("Magneto", xMen);
+            categoryRepository.save(magneto);
+            Category ironMan = new Category("Iron Man", marvel);
+            categoryRepository.save(ironMan);
+            Category thor = new Category("Thor", marvel);
+            categoryRepository.save(thor);
+            List<Category> categoryList = new ArrayList<>();
+            categoryList.add(DC);
+            categoryList.add(marvel);
+            categoryList.add(batman);
+            categoryList.add(superman);
+            categoryList.add(wonderWoman);
+            categoryList.add(xMen);
+            categoryList.add(wolverine);
+            categoryList.add(magneto);
+            categoryList.add(ironMan);
+            categoryList.add(DC);
+            categoryList.add(thor);
+            categoryRepository.saveAll(categoryList);
+        }
     }
 }

@@ -5,8 +5,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppComponent } from './app.component';
 import {CategoryListComponent} from './category-list/category-list.component';
 import {CategoryFormComponent} from './category-form/category-form.component';
-import {CategoryService} from './category-service.service';
 import {BrowserModule} from '@angular/platform-browser';
+import {CategoryService} from './category.service';
 
 
 @NgModule({
