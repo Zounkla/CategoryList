@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {Category} from './category';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs/Observable';
-import {Category} from './category';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {CategoryResponse} from './category-response';
 
 @Injectable()
 export class CategoryService {
@@ -24,7 +25,7 @@ export class CategoryService {
 
   constructor(private http: HttpClient) {
     this.categoryUrl = 'http://localhost:8080/category';
-    this.isRoot = 'None';
+    this.isRoot = 'true';
     this.beforeDate = '';
     this.afterDate = '';
     this.orderName = 'None';
@@ -43,6 +44,7 @@ export class CategoryService {
   public changeIsRoot(newValue: string) {
     this.isRoot = newValue;
   }
+
   public changeBeforeDate(newValue: string) {
     this.beforeDate = newValue;
   }
@@ -63,10 +65,12 @@ export class CategoryService {
     this.orderChildren = newValue;
   }
 
-  public findCategoriesByPageAndParent(parentName: string): Observable<Category[]> {
+  public searchCategories(parentName: string): Observable<CategoryResponse> {
     const page: number = this.currentPage.getValue();
-    this.categoriesUrl = 'http://localhost:8080/category/search?page=' + page + '' +
-      '&parentName=' + parentName;
+    this.categoriesUrl = 'http://localhost:8080/category/search?page=' + page;
+    if (parentName !== 'None') {
+      this.categoriesUrl += '&parentName=' + parentName;
+    }
     if (this.isRoot !== 'None') {
       this.categoriesUrl += '&isRoot=' + this.isRoot;
     }
@@ -85,8 +89,7 @@ export class CategoryService {
     if (this.orderChildren !== 'None') {
       this.categoriesUrl += '&orderByChildrenNumber=' + this.orderChildren;
     }
-    console.log(this.categoriesUrl);
-    return this.http.get<Category[]>(this.categoriesUrl);
+    return this.http.get<CategoryResponse>(this.categoriesUrl);
   }
 
   public findPageCategoriesCount(parentName: string) {
@@ -100,7 +103,6 @@ export class CategoryService {
   }
 
   public save(category: Category) {
-    console.log(category);
     return this.http.post<Category>(this.categoryUrl, category);
   }
 

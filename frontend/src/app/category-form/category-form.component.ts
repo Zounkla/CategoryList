@@ -1,7 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {Category} from '../category';
 import {ActivatedRoute, Router} from '@angular/router';
-import {CategoryService} from '../category-service.service';
+
+import {CategoryService} from '../category.service';
 
 @Component({
   selector: 'app-category-form',

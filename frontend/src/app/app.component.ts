@@ -1,7 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
-import {CategoryService} from './category-service.service';
 import {Category} from './category';
+import {CategoryService} from './category.service';
+import {CategoryResponse} from './category-response';
 
 
 @Component({
@@ -11,7 +12,7 @@ import {Category} from './category';
 })
 export class AppComponent implements OnInit {
 
-  isRoot = 'None';
+  isRoot = 'true';
   dateBefore = '';
   dateAfter = '';
   orderName = 'None';
@@ -39,8 +40,8 @@ export class AppComponent implements OnInit {
       this.pageCount = data;
       this.service.pages.next(data);
     });
-    this.service.findCategoriesByPageAndParent(this.actualParentName).subscribe(data => {
-      this.categories = Object.values(data);
+    this.service.searchCategories(this.actualParentName).subscribe((data: CategoryResponse) => {
+      this.categories = Object.values(data.categories);
     });
     this.service.creationDate.subscribe(data => {
       this.creationDate = data;
@@ -54,6 +55,7 @@ export class AppComponent implements OnInit {
 
   resetParent() {
     this.actualParentName = 'None';
+    this.isRoot = 'true';
     this.dateBefore = '';
     this.dateAfter = '';
     this.orderName = 'None';
@@ -62,6 +64,7 @@ export class AppComponent implements OnInit {
     this.service.currentPage.next(0);
     this.service.changePageCount(this.pageCount);
     this.service.changeCategories(this.categories);
+    this.service.changeIsRoot(this.isRoot);
     this.changeBeforeDate(this.dateBefore);
     this.changeAfterDate(this.dateAfter);
     this.service.creationDate.next(new Date());

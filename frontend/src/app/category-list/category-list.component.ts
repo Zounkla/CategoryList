@@ -1,7 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {Category} from '../category';
-import {CategoryService} from '../category-service.service';
 import {Subscription} from 'rxjs/Subscription';
+import {CategoryService} from '../category.service';
+import {CategoryResponse} from '../category-response';
 
 @Component({
   selector: 'app-category-list',
@@ -22,7 +23,7 @@ export class CategoryListComponent implements OnInit {
 
   constructor(private categoryService: CategoryService) {
     this.categoryService.currentCategories.subscribe(
-      value => this.categories = value
+      (value: Category[]) => this.categories = value
     );
     this.categoryService.pages.subscribe(
       value => this.pageCount = value
@@ -45,12 +46,10 @@ export class CategoryListComponent implements OnInit {
   }
 
   fetchData() {
-    this.categoryService.findCategoriesByPageAndParent(this.parentName).subscribe(data => {
-      this.categories = Object.values(data);
-    });
-    this.categoryService.findPageCategoriesCount(this.parentName).subscribe(data => {
-      this.pageCount = data;
-      this.categoryService.pages.next(data);
+    this.categoryService.searchCategories(this.parentName).subscribe((data: CategoryResponse) => {
+      this.categories = Object.values(data.categories);
+      this.pageCount = data.pageCount;
+      this.categoryService.pages.next(data.pageCount);
     });
     this.categoryService.currentPage.subscribe(value =>
         this.currentPage = value,
@@ -59,6 +58,7 @@ export class CategoryListComponent implements OnInit {
 
   changeParentCategory(category: Category) {
     this.parentName = category.name;
+    this.categoryService.changeIsRoot('false');
     this.categoryService.currentPage.next(0);
     this.fetchData();
     this.categoryService.lastParentName.next(category.name);
