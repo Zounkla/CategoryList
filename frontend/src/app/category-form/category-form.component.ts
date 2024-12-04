@@ -30,8 +30,12 @@ export class CategoryFormComponent implements OnInit {
   }
 
   onSubmit() {
-
-    this.categoryService.save(this.category).subscribe(() => this.gotoCategoryList());
+    this.categoryService.save(this.category)
+    try {
+      this.categoryService.save(this.category).subscribe(() => this.gotoCategoryList());
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   onParentChange(newValue) {
