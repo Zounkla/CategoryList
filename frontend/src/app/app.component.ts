@@ -103,4 +103,8 @@ export class AppComponent implements OnInit {
   deleteCurrentCategory() {
     this.service.deleteCategory(this.actualParentName).subscribe(() => this.resetParent());
   }
+
+  changeOldName(value: string) {
+    this.service.setOldName(value);
+  }
 }

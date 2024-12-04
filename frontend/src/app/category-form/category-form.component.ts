@@ -24,13 +24,15 @@ export class CategoryFormComponent implements OnInit {
     this.categoryService.lastParentName.subscribe(value => {
       this.parentName = value;
       this.category.parentName = this.parentName;
-      this.category.oldParentName = this.parentName;
-      this.category.oldName = this.category.parentName;
+      this.category.oldName = this.parentName;
+    });
+    this.categoryService.oldName.subscribe(value => {
+      this.category.oldName = value;
     });
   }
 
   onSubmit() {
-
+    console.log(this.category);
     this.categoryService.save(this.category).subscribe(() => this.gotoCategoryList());
   }
 
@@ -45,12 +47,12 @@ export class CategoryFormComponent implements OnInit {
 
   fetchData() {
     this.categoryService.findAll().subscribe(data => {
-      this.categories = Object.values(data);
+      this.categories = Object.values(data.categories);
     });
   }
 
   gotoCategoryList() {
-    this.router.navigate(['/home']);
+    this.router.navigate(['/home']).then();
   }
 
 }

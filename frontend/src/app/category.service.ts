@@ -39,6 +39,8 @@ export class CategoryService {
 
   public lastParentName: BehaviorSubject<string> = new BehaviorSubject<string>('None');
 
+  public oldName: BehaviorSubject<string> = new BehaviorSubject<string>('');
+
   public creationDate: BehaviorSubject<Date> = new BehaviorSubject<Date>(new Date());
 
   public changeIsRoot(newValue: string) {
@@ -98,8 +100,8 @@ export class CategoryService {
   }
 
   public findAll() {
-    const pageUrl = 'http://localhost:8080/category';
-    return this.http.get<Category[]>(pageUrl);
+    const pageUrl = 'http://localhost:8080/category/all';
+    return this.http.get<CategoryResponse>(pageUrl);
   }
 
   public save(category: Category) {
@@ -122,5 +124,8 @@ export class CategoryService {
   public deleteCategory(categoryName: string) {
     const deleteCategoryUrl = 'http://localhost:8080/category/deleteCategory?categoryName=' + categoryName;
     return this.http.delete(deleteCategoryUrl);
+  }
+  public setOldName(newName: string) {
+    this.oldName.next(newName);
   }
 }
