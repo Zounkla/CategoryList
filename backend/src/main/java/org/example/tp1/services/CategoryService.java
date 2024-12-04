@@ -77,10 +77,39 @@ public class CategoryService {
     public Category insertCategory(String name, Category parent) {
         Category category = new Category(name, parent);
         categoryRepository.save(category);
-        categoryRepository.save(parent);
+        if (parent != null) {
+            categoryRepository.save(parent);
+        }
         return category;
     }
 
+    public Category updateCategory(String categoryName, String newName, String newParent) {
+        Category category = categoryRepository.findByName(categoryName).get();
+        Optional<Category> optionalParentCategory = categoryRepository.findByName(newParent);
+        Category parent = null;
+        if (optionalParentCategory.isPresent()) {
+            parent = optionalParentCategory.get();
+        }
+        if (category == parent) {
+            throw new UnsupportedOperationException("cannot be parent of iteself");
+        }
+        if (category.getParent() != null) {
+            category.getParent().removeChildren(category);
+            categoryRepository.save(category.getParent());
+        }
+        category.setName(newName);
+        categoryRepository.save(category);
+        if (category.getParent() == parent) {
+            return category;
+        }
+        category.setParent(parent);
+        if (parent != null) {
+            parent.addChildren(category);
+            categoryRepository.save(parent);
+        }
+        categoryRepository.save(category);
+        return category;
+    }
     public Category updateParent(String parentName, String childName) {
         Optional<Category> optionalParentCategory = categoryRepository.findByName(parentName);
         Optional<Category> optionalChildCategory = categoryRepository.findByName(childName);

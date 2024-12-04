@@ -40,7 +40,6 @@ public class CategoryController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> insert(@RequestBody String nameJSON) {
-
         JSONObject jsonObject = new JSONObject(nameJSON);
         if (jsonObject.isNull("name")) {
             return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(
@@ -60,25 +59,30 @@ public class CategoryController {
                             "A name is required")
             );
         }
-
-        String oldName = jsonObject.getString("oldName");
-        if (oldName != null) {
-            Category category = categoryService.updateName(oldName, name);
-            return ResponseEntity.ok(categoryService.createCategoryJSON(category));
+        String oldName = "";
+        if (!jsonObject.isNull("oldName")) {
+            oldName = jsonObject.getString("oldName");
         }
 
-        if (categoryService.categoryAlreadyExists(name)) {
-            Category category = categoryService.updateParent(parentName, name);
+        if (!oldName.isEmpty() && categoryService.categoryAlreadyExists(oldName)) {
+            Category category;
+            try {
+                category = categoryService.updateCategory(oldName, name, parentName);
+            } catch(UnsupportedOperationException e) {
+                return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(
+                        categoryService.createError(HttpStatus.PRECONDITION_FAILED,
+                                "Cannot be parent of itself")
+                );
+            }
             return ResponseEntity.ok(categoryService.createCategoryJSON(category));
         }
-
-        if (!parentName.isEmpty() && !categoryService.categoryAlreadyExists(parentName)) {
+        if (!parentName.equals("None") && !categoryService.categoryAlreadyExists(parentName)) {
             return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(
                     categoryService.createError(HttpStatus.PRECONDITION_FAILED,
                             "Parent category does not exist")
             );
         }
-        Category parent = parentName.isEmpty() ? null : categoryService.getCategory(parentName);
+        Category parent = parentName.equals("None") ? null : categoryService.getCategory(parentName);
         Category category = categoryService.insertCategory(name, parent);
         return ResponseEntity.ok(categoryService.createCategoryJSON(category));
     }
@@ -348,7 +352,7 @@ public class CategoryController {
     })
     @Operation(summary = "Return all the categories", description = "Select all the categories on database and " +
             "return it in JSON format")
-    @RequestMapping(value="/category/getCategories", method = RequestMethod.GET,
+    @RequestMapping(value="/category/all", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> getCategories() {
         List<Category> categories = categoryService.getCategories();
