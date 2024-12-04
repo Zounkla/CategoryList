@@ -1,9 +1,14 @@
 import {Injectable} from '@angular/core';
+// @ts-ignore
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Category} from './category';
 import {HttpClient} from '@angular/common/http';
+import {HttpErrorResponse} from '@angular/common/http';
+// @ts-ignore
 import {Observable} from 'rxjs/Observable';
 import {CategoryResponse} from './category-response';
+import { catchError } from 'rxjs/operators';
+import { throwError } from 'rxjs';
 
 @Injectable()
 export class CategoryService {
@@ -103,7 +108,7 @@ export class CategoryService {
   }
 
   public save(category: Category) {
-    return this.http.post<Category>(this.categoryUrl, category);
+    return this.http.post<Category>(this.categoryUrl, category).pipe(catchError(this.handleError));
   }
 
   public changeCategories(categories: Category[]) {
@@ -123,4 +128,14 @@ export class CategoryService {
     const deleteCategoryUrl = 'http://localhost:8080/category/deleteCategory?categoryName=' + categoryName;
     return this.http.delete(deleteCategoryUrl);
   }
+
+  private handleError(error: HttpErrorResponse) {
+    if(error.status === 0) {
+      console.error("An error as occured : " + error.error);
+    } else {
+      console.error("Backend error: " + error.error);
+    }
+    return throwError(() => new Error("Something went wrong"))
+  }
+
 }
