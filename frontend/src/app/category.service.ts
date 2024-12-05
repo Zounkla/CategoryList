@@ -109,8 +109,7 @@ export class CategoryService {
   public save(category: Category) {
     return this.http.post<Category>(this.categoryUrl, category).pipe(
       catchError(error => {
-        console.error(error);
-        throw error
+        throw new Error(error.message);
       })
     );
   }

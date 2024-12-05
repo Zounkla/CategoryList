@@ -26,6 +26,8 @@
       </div>
       <button type="submit" [disabled]="!categoryForm.form.valid"
               class="btn btn-info m-1">Submit</button>
+
+        <div *ngIf="lastError != ''" class="alert alert-danger m-2">{{lastError}}</div>
     </form>
   </div>
 </div>
