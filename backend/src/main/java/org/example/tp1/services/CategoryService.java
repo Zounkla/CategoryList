@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.security.InvalidParameterException;
 import java.util.*;
 
 @org.springframework.stereotype.Service
@@ -75,6 +76,9 @@ public class CategoryService {
     }
 
     public Category insertCategory(String name, Category parent) {
+        if (categoryAlreadyExists(name)) {
+            throw new InvalidParameterException("cartegory already exists");
+        }
         Category category = new Category(name, parent);
         categoryRepository.save(category);
         if (parent != null) {
@@ -89,6 +93,9 @@ public class CategoryService {
         Category parent = null;
         if (optionalParentCategory.isPresent()) {
             parent = optionalParentCategory.get();
+        }
+        if (categoryAlreadyExists(newName)) {
+            throw new InvalidParameterException("Category already exists");
         }
         if (category == parent) {
             throw new UnsupportedOperationException("cannot be parent of iteself");
@@ -107,36 +114,6 @@ public class CategoryService {
             parent.addChildren(category);
             categoryRepository.save(parent);
         }
-        categoryRepository.save(category);
-        return category;
-    }
-    public Category updateParent(String parentName, String childName) {
-        Optional<Category> optionalParentCategory = categoryRepository.findByName(parentName);
-        Optional<Category> optionalChildCategory = categoryRepository.findByName(childName);
-        if (optionalParentCategory.isEmpty() || optionalChildCategory.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found");
-        }
-        Category parent = optionalParentCategory.get();
-        Category child = optionalChildCategory.get();
-        Category oldParent = child.getParent();
-        if (oldParent != null) {
-            oldParent.removeChildren(child);
-            categoryRepository.save(oldParent);
-        }
-        child.setParent(parent);
-        parent.addChildren(child);
-        categoryRepository.save(child);
-        categoryRepository.save(parent);
-        return parent;
-    }
-
-    public Category updateName(String oldName, String newName) {
-        Optional<Category> optionalCategory = categoryRepository.findByName(oldName);
-        if (optionalCategory.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found");
-        }
-        Category category = optionalCategory.get();
-        category.setName(newName);
         categoryRepository.save(category);
         return category;
     }
@@ -164,7 +141,9 @@ public class CategoryService {
             child.setParent(parent);
             if (parent != null) {
                 parent.addChildren(child);
+                categoryRepository.save(parent);
             }
+            categoryRepository.save(child);
         }
         categoryRepository.delete(category);
         return category;
@@ -181,26 +160,5 @@ public class CategoryService {
             names.add(category.getName());
         }
         return categoryRepository.findAllByName(names, PageRequest.of(page, CATEGORY_PER_PAGE));
-    }
-
-    public List<Category> getChildren(Category category) {
-        return this.categoryRepository.findByParent(category);
-    }
-
-    public int getPageCount(String parentName) {
-        Page<Category> categoryPage = getCategoryPage(0, parentName);
-        return categoryPage.getTotalPages();
-    }
-
-    private Page<Category> getCategoryPage(int page, String parentName) {
-        if (parentName.isEmpty()) {
-            return categoryRepository.findBy(PageRequest.of(page, CATEGORY_PER_PAGE));
-        }
-        Optional<Category> optionalCategory = categoryRepository.findByName(parentName);
-        Category parent = optionalCategory.orElse(null);
-        if (parent == null) {
-            return categoryRepository.findAllByParentIsNull(PageRequest.of(page, CATEGORY_PER_PAGE));
-        }
-        return categoryRepository.findAllByParent(parent, PageRequest.of(page, CATEGORY_PER_PAGE));
     }
 }

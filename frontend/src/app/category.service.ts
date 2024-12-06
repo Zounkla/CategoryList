@@ -93,12 +93,6 @@ export class CategoryService {
     }
     return this.http.get<CategoryResponse>(this.categoriesUrl);
   }
-
-  public findPageCategoriesCount(parentName: string) {
-    const pageCountUrl = 'http://localhost:8080/category/getPageCount?parentName=' + parentName;
-    return this.http.get<number>(pageCountUrl);
-  }
-
   public findAll() {
     const pageUrl = 'http://localhost:8080/category/all';
     return this.http.get<CategoryResponse>(pageUrl);
