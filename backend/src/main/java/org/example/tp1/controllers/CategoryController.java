@@ -1,8 +1,10 @@
 package org.example.tp1.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.example.tp1.entities.Category;
@@ -31,16 +33,22 @@ public class CategoryController {
     }
 
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Category created"),
-            @ApiResponse(responseCode = "412", description = "A name is required"),
-            @ApiResponse(responseCode = "412", description = "This category already exists"),
-
+            @ApiResponse(responseCode = "200", description = "Category created",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(example = JsonExample.CATEGORY_EXAMPLE))),
+            @ApiResponse(responseCode = "412", description = "Category already exists or " +
+                    "cannot be parent of itself or parent does not exist",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(example = JsonExample.CATEGORY_ERROR_PRECOND_EXAMPLE)))
     })
-    @Operation(summary = "Create category", description = "Inserts a new category into Database")
+    @Operation(summary = "Create category", description = "Inserts or update a category into database")
     @RequestMapping(value = "/category", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> insert(@RequestBody String nameJSON) {
+    public ResponseEntity<String> insert(@RequestBody (
+            description = "New Category to insert",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+            schema = @Schema(example = JsonExample.INSERT_EXAMPLE))) String nameJSON) {
         JSONObject jsonObject = new JSONObject(nameJSON);
         if (jsonObject.isNull("name")) {
             return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(
@@ -102,21 +110,51 @@ public class CategoryController {
     }
 
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Category found"),
-
+            @ApiResponse(responseCode = "200", description = "Category found",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+            schema = @Schema(example = JsonExample.CATEGORIES_EXAMPLE)))
     })
     @Operation(summary = "Return all the categories", description = "Select all the categories on database " +
             "filtered by criterias")
     @RequestMapping(value = "/category/search", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> getCategories(@RequestParam Optional<Boolean> isRoot,
-                                                @RequestParam Optional<String> beforeDate,
-                                                @RequestParam Optional<String> afterDate,
-                                                @RequestParam Optional<Integer> page,
-                                                @RequestParam Optional<String> parentName,
-                                                @RequestParam Optional<Boolean> orderByName,
-                                                @RequestParam Optional<Boolean> orderByCreationDate,
-                                                @RequestParam Optional<Boolean> orderByChildrenNumber
+    public ResponseEntity<String> getCategories(@Parameter(
+                                                name =  "isRoot",
+                                                description  = "categories matching this state",
+                                                example = "false"
+                                                ) @RequestParam Optional<Boolean> isRoot,
+                                                @Parameter(
+                                                name =  "beforeDate",
+                                                description  = "categories before this date",
+                                                example = "2024-12-31"
+                                                ) @RequestParam Optional<String> beforeDate,
+                                                @Parameter(
+                                                name =  "afterDate",
+                                                description  = "categories after this date",
+                                                example = "2025-12-31"
+                                                )@RequestParam Optional<String> afterDate,
+                                                @Parameter(
+                                                name =  "beforeDate",
+                                                description  = "categories before this date",
+                                                example = "2024-12-31"
+                                                )@RequestParam Optional<Integer> page,
+                                                @Parameter(
+                                                name =  "parentName",
+                                                description  = "categories having this parent",
+                                                example = "DC"
+                                                )@RequestParam Optional<String> parentName,
+                                                @Parameter(
+                                                name =  "orderByName",
+                                                example = "true"
+                                                )@RequestParam Optional<Boolean> orderByName,
+                                                @Parameter(
+                                                name =  "orderByCreationDate",
+                                                example = "false"
+                                                )@RequestParam Optional<Boolean> orderByCreationDate,
+                                                @Parameter(
+                                                name =  "orderByChildrenNumber",
+                                                example = "true"
+                                                )@RequestParam Optional<Boolean> orderByChildrenNumber
     ) {
         List<Category> categories = this.categoryService.getCategories();
         int pageNb = 0;
@@ -206,10 +244,15 @@ public class CategoryController {
 
 
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Category found"),
-            @ApiResponse(responseCode = "404", description = "Category not found"),
-            @ApiResponse(responseCode = "412", description = "Must provide a name"),
-
+            @ApiResponse(responseCode = "200", description = "Category found",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(example = JsonExample.CATEGORY_EXAMPLE))),
+            @ApiResponse(responseCode = "404", description = "Category not found",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(example = JsonExample.CATEGORY_NOT_FOUND_EXAMPLE))),
+            @ApiResponse(responseCode = "412", description = "Must provide a name",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(example = JsonExample.CATEGORY_ERROR_PRECOND_EXAMPLE))),
     })
     @Operation(summary = "Delete a category", description = "Delete a category from database")
     @CrossOrigin(origins = "http://localhost:4200")

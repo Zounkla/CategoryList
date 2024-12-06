@@ -141,7 +141,9 @@ public class CategoryService {
             child.setParent(parent);
             if (parent != null) {
                 parent.addChildren(child);
+                categoryRepository.save(parent);
             }
+            categoryRepository.save(child);
         }
         categoryRepository.delete(category);
         return category;
