@@ -36,10 +36,6 @@ export class AppComponent implements OnInit {
       this.actualParentName = value;
     });
     this.pageCount = this.service.pages.value;
-    this.service.findPageCategoriesCount(this.actualParentName).subscribe(data => {
-      this.pageCount = data;
-      this.service.pages.next(data);
-    });
     this.service.searchCategories(this.actualParentName).subscribe((data: CategoryResponse) => {
       this.categories = Object.values(data.categories);
     });
