@@ -35,8 +35,8 @@ export class CategoryFormComponent implements OnInit {
 
   onSubmit() {
     this.categoryService.save(this.category).subscribe(
-      (response) => this.gotoCategoryList(),
-      (error) => this.displayError(error));
+      (_) => this.gotoCategoryList(),
+      (error: Error) => this.displayError(error));
 
   }
 

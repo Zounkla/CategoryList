@@ -103,7 +103,7 @@ export class CategoryService {
   public save(category: Category) {
     return this.http.post<Category>(this.categoryUrl, category).pipe(
       catchError(error => {
-        throw new Error(error.message);
+        throw new Error("Category name already exists or can't be parent of itself");
       })
     );
   }
