@@ -17,6 +17,8 @@ export class CategoryFormComponent implements OnInit {
 
   parentName: string;
 
+  lastError :string = '';
+
   constructor(private route: ActivatedRoute,
               private router: Router,
               private categoryService: CategoryService) {
@@ -32,8 +34,10 @@ export class CategoryFormComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log(this.category);
-    this.categoryService.save(this.category).subscribe(() => this.gotoCategoryList());
+    this.categoryService.save(this.category).subscribe(
+      (response) => this.gotoCategoryList(),
+      (error) => this.displayError(error));
+
   }
 
   onParentChange(newValue) {
@@ -53,6 +57,11 @@ export class CategoryFormComponent implements OnInit {
 
   gotoCategoryList() {
     this.router.navigate(['/home']).then();
+    this.lastError = '';
+  }
+
+  displayError(error: Error) {
+    this.lastError = error.message;
   }
 
 }

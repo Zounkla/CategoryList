@@ -2,8 +2,10 @@ import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Category} from './category';
 import {HttpClient} from '@angular/common/http';
+import {HttpErrorResponse} from '@angular/common/http';
 import {Observable} from 'rxjs/Observable';
 import {CategoryResponse} from './category-response';
+import { catchError } from 'rxjs/operators';
 
 @Injectable()
 export class CategoryService {
@@ -99,7 +101,11 @@ export class CategoryService {
   }
 
   public save(category: Category) {
-    return this.http.post<Category>(this.categoryUrl, category);
+    return this.http.post<Category>(this.categoryUrl, category).pipe(
+      catchError(error => {
+        throw new Error(error.message);
+      })
+    );
   }
 
   public changeCategories(categories: Category[]) {
@@ -122,4 +128,5 @@ export class CategoryService {
   public setOldName(newName: string) {
     this.oldName.next(newName);
   }
+
 }
