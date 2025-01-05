@@ -137,13 +137,14 @@ public class CategoryService {
         }
         Category category = optionalCategory.get();
         Category parent = category.getParent();
+
         for (Category child : category.getChildren()) {
             child.setParent(parent);
-            if (parent != null) {
-                parent.addChildren(child);
-                categoryRepository.save(parent);
-            }
             categoryRepository.save(child);
+        }
+        if (parent != null) {
+            parent.removeChildren(category);
+            categoryRepository.save(parent);
         }
         categoryRepository.delete(category);
         return category;

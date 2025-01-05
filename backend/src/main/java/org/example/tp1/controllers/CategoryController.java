@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.example.tp1.DTO.CategoryDTO;
 import org.example.tp1.entities.Category;
 import org.example.tp1.examples.JsonExample;
 import org.example.tp1.services.CategoryService;
@@ -246,26 +247,27 @@ public class CategoryController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Category found",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(example = JsonExample.CATEGORY_EXAMPLE))),
+                    schema = @Schema(implementation = CategoryDTO.class))),
             @ApiResponse(responseCode = "404", description = "Category not found",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(example = JsonExample.CATEGORY_NOT_FOUND_EXAMPLE))),
-            @ApiResponse(responseCode = "412", description = "Must provide a name",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(example = JsonExample.CATEGORY_ERROR_PRECOND_EXAMPLE))),
+                    content = @Content),
+            @ApiResponse(responseCode = "412", description = "Must provide a name", content = @Content),
     })
     @Operation(summary = "Delete a category", description = "Delete a category from database")
     @CrossOrigin(origins = "http://localhost:4200")
-    @DeleteMapping(value = "/category/deleteCategory")
-    public ResponseEntity<String> deleteCategory(@RequestParam String categoryName) {
+    @DeleteMapping(value = "/category")
+    public ResponseEntity<CategoryDTO> deleteCategory(@RequestParam String categoryName) {
         try {
             Category category = categoryService.deleteCategory(categoryName);
-            return ResponseEntity.ok(categoryService.createCategoryJSON(category));
-        } catch (ResponseStatusException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                    categoryService.createError(HttpStatus.NOT_FOUND,
-                            "Category does not exists")
+            CategoryDTO categoryDTO = new CategoryDTO(
+                    category.getId(),
+                    category.getName(),
+                    category.getParent().getName(),
+                    category.getChildrenNames(),
+                    category.getCreationDate()
             );
+            return ResponseEntity.status(HttpStatus.OK).body(categoryDTO);
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 }
