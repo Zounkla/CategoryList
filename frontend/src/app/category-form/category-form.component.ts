@@ -17,7 +17,7 @@ export class CategoryFormComponent implements OnInit {
 
   parentName: string;
 
-  lastError :string = '';
+  lastError = '';
 
   constructor(private route: ActivatedRoute,
               private router: Router,
@@ -51,7 +51,7 @@ export class CategoryFormComponent implements OnInit {
 
   fetchData() {
     this.categoryService.findAll().subscribe(data => {
-      this.categories = data;
+      this.categories = data.categories;
     });
   }
 

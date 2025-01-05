@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.example.tp1.DTO.CategoriesDTO;
 import org.example.tp1.DTO.CategoryDTO;
 import org.example.tp1.entities.Category;
 import org.example.tp1.examples.JsonExample;
@@ -114,46 +115,46 @@ public class CategoryController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Category found",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    array = @ArraySchema(schema = @Schema(implementation = CategoryDTO.class))))
+                    schema = @Schema(implementation = CategoriesDTO.class)))
     })
     @Operation(summary = "Return all the categories", description = "Select all the categories on database " +
             "filtered by criterias")
     @RequestMapping(value = "/category/search", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<CategoryDTO>> getCategories(@Parameter(
+    public ResponseEntity<CategoriesDTO> getCategories(@Parameter(
                                                 name =  "isRoot",
                                                 description  = "categories matching this state",
                                                 example = "false"
                                                 ) @RequestParam Optional<Boolean> isRoot,
-                                                @Parameter(
+                                                       @Parameter(
                                                 name =  "beforeDate",
                                                 description  = "categories before this date",
                                                 example = "2024-12-31"
                                                 ) @RequestParam Optional<String> beforeDate,
-                                                @Parameter(
+                                                       @Parameter(
                                                 name =  "afterDate",
                                                 description  = "categories after this date",
                                                 example = "2025-12-31"
                                                 )@RequestParam Optional<String> afterDate,
-                                                @Parameter(
+                                                       @Parameter(
                                                 name =  "beforeDate",
                                                 description  = "categories before this date",
                                                 example = "2024-12-31"
                                                 )@RequestParam Optional<Integer> page,
-                                                @Parameter(
+                                                       @Parameter(
                                                 name =  "parentName",
                                                 description  = "categories having this parent",
                                                 example = "DC"
                                                 )@RequestParam Optional<String> parentName,
-                                                @Parameter(
+                                                       @Parameter(
                                                 name =  "orderByName",
                                                 example = "true"
                                                 )@RequestParam Optional<Boolean> orderByName,
-                                                @Parameter(
+                                                       @Parameter(
                                                 name =  "orderByCreationDate",
                                                 example = "false"
                                                 )@RequestParam Optional<Boolean> orderByCreationDate,
-                                                @Parameter(
+                                                       @Parameter(
                                                 name =  "orderByChildrenNumber",
                                                 example = "true"
                                                 )@RequestParam Optional<Boolean> orderByChildrenNumber
@@ -220,22 +221,22 @@ public class CategoryController {
         }
         int numberOfCategories = categories.size();
         categories = this.categoryService.getByPage(categories, pageNb);
-        return ResponseEntity.ok(categoryService.getListDTO(categories));
+        return ResponseEntity.ok(categoryService.getListDTO(categories, numberOfCategories));
     }
 
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Categories found",
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    array = @ArraySchema(schema = @Schema(implementation = CategoryDTO.class))))
+            schema = @Schema(implementation = CategoriesDTO.class)))
     })
     @Operation(summary = "Returns all the categories", description = "Selects all the categories on database and " +
             "returns it in JSON format")
     @RequestMapping(value = "/category/all", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<CategoryDTO>> getCategories() {
+    public ResponseEntity<CategoriesDTO> getCategories() {
         List<Category> categories = categoryService.getCategories();
-        return ResponseEntity.ok(categoryService.getListDTO(categories));
+        return ResponseEntity.ok(categoryService.getListDTO(categories, categories.size()));
     }
 
 

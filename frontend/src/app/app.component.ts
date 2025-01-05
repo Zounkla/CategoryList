@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {Category} from './category';
 import {CategoryService} from './category.service';
+import {CategoryResponse} from './category-response';
 
 
 @Component({
@@ -35,8 +36,8 @@ export class AppComponent implements OnInit {
       this.actualParentName = value;
     });
     this.pageCount = this.service.pages.value;
-    this.service.searchCategories(this.actualParentName).subscribe((data: Category[]) => {
-      this.categories = data;
+    this.service.searchCategories(this.actualParentName).subscribe((data: CategoryResponse) => {
+      this.categories = data.categories;
     });
     this.service.creationDate.subscribe(data => {
       this.creationDate = data;

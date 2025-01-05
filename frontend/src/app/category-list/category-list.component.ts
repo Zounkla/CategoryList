@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Category} from '../category';
 import {Subscription} from 'rxjs/Subscription';
 import {CategoryService} from '../category.service';
+import {CategoryResponse} from '../category-response';
 
 @Component({
   selector: 'app-category-list',
@@ -45,10 +46,10 @@ export class CategoryListComponent implements OnInit {
   }
 
   fetchData() {
-    this.categoryService.searchCategories(this.parentName).subscribe((data: Category[]) => {
-      this.categories = data;
-      this.pageCount = data.length;
-      this.categoryService.pages.next(Math.ceil(this.pageCount / 2));
+    this.categoryService.searchCategories(this.parentName).subscribe((data: CategoryResponse) => {
+      this.categories = data.categories;
+      this.pageCount = data.totalItems;
+      this.categoryService.pages.next(this.pageCount);
     });
     this.categoryService.currentPage.subscribe(value =>
         this.currentPage = value,
@@ -61,7 +62,6 @@ export class CategoryListComponent implements OnInit {
     this.categoryService.currentPage.next(0);
     this.fetchData();
     this.categoryService.lastParentName.next(category.name);
-    console.log(category);
     this.categoryService.creationDate.next(new Date(category.creationDate));
   }
 

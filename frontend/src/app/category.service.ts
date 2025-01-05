@@ -92,11 +92,11 @@ export class CategoryService {
     if (this.orderChildren !== 'None') {
       this.categoriesUrl += '&orderByChildrenNumber=' + this.orderChildren;
     }
-    return this.http.get<Category[]>(this.categoriesUrl);
+    return this.http.get<CategoryResponse>(this.categoriesUrl);
   }
   public findAll() {
     const pageUrl = 'http://localhost:8080/category/all';
-    return this.http.get<Category[]>(pageUrl);
+    return this.http.get<CategoryResponse>(pageUrl);
   }
 
   public save(category: Category) {
