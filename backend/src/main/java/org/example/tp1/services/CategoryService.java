@@ -2,6 +2,7 @@ package org.example.tp1.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.example.tp1.DTO.CategoryDTO;
 import org.example.tp1.entities.Category;
 import org.example.tp1.repositories.CategoryRepository;
 import org.json.JSONObject;
@@ -153,6 +154,25 @@ public class CategoryService {
     public List<Category> getByPage(List<Category> categories, int pageNb) {
         Page<Category> categoryPage = getCategoriesPage(pageNb, categories);
         return new ArrayList<>(categoryPage.getContent());
+    }
+
+    public CategoryDTO getDTO(Category category) {
+        String parentName = category.getParent() == null ? "" : category.getParent().getName();
+        return new CategoryDTO(
+                category.getId(),
+                category.getName(),
+                parentName,
+                category.getChildrenNames(),
+                category.getCreationDate()
+        );
+    }
+
+    public List<CategoryDTO> getListDTO(List<Category> categories) {
+        List<CategoryDTO> result = new ArrayList<>();
+        for (Category category : categories) {
+            result.add(getDTO(category));
+        }
+        return result;
     }
 
     private Page<Category> getCategoriesPage(int page, List<Category> categories) {

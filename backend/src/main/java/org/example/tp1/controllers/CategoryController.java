@@ -241,19 +241,7 @@ public class CategoryController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<CategoryDTO>> getCategories() {
         List<Category> categories = categoryService.getCategories();
-        List<CategoryDTO> result = new ArrayList<>();
-        for (Category category : categories) {
-            String parentName = category.getParent() == null ? "" : category.getParent().getName();
-            CategoryDTO categoryDTO = new CategoryDTO(
-                    category.getId(),
-                    category.getName(),
-                    parentName,
-                    category.getChildrenNames(),
-                    category.getCreationDate()
-            );
-            result.add(categoryDTO);
-        }
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(categoryService.getListDTO(categories));
     }
 
 
@@ -271,14 +259,7 @@ public class CategoryController {
     public ResponseEntity<CategoryDTO> deleteCategory(@RequestParam String categoryName) {
         try {
             Category category = categoryService.deleteCategory(categoryName);
-            CategoryDTO categoryDTO = new CategoryDTO(
-                    category.getId(),
-                    category.getName(),
-                    category.getParent().getName(),
-                    category.getChildrenNames(),
-                    category.getCreationDate()
-            );
-            return ResponseEntity.status(HttpStatus.OK).body(categoryDTO);
+            return ResponseEntity.status(HttpStatus.OK).body(categoryService.getDTO(category));
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
