@@ -5,17 +5,17 @@ import java.util.List;
 public class CategoriesDTO {
 
     private final List<CategoryDTO> categories;
-    private final int totalItems;
+    private final int totalPages;
 
-    public CategoriesDTO(List<CategoryDTO> categories, int totalItems) {
+    public CategoriesDTO(List<CategoryDTO> categories, int totalPages) {
         this.categories = categories;
-        this.totalItems = totalItems;
+        this.totalPages = totalPages;
     }
 
     public List<CategoryDTO> getCategories() {
         return categories;
     }
-    public int getTotalItems() {
-        return totalItems;
+    public int getTotalPages() {
+        return totalPages;
     }
 }

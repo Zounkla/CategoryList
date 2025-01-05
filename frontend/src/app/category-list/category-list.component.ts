@@ -48,7 +48,7 @@ export class CategoryListComponent implements OnInit {
   fetchData() {
     this.categoryService.searchCategories(this.parentName).subscribe((data: CategoryResponse) => {
       this.categories = data.categories;
-      this.pageCount = data.totalItems;
+      this.pageCount = data.totalPages;
       this.categoryService.pages.next(this.pageCount);
     });
     this.categoryService.currentPage.subscribe(value =>

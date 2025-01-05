@@ -137,9 +137,9 @@ public class CategoryController {
                                                 example = "2025-12-31"
                                                 )@RequestParam Optional<String> afterDate,
                                                        @Parameter(
-                                                name =  "beforeDate",
-                                                description  = "categories before this date",
-                                                example = "2024-12-31"
+                                                name =  "page",
+                                                description  = "page",
+                                                example = "1"
                                                 )@RequestParam Optional<Integer> page,
                                                        @Parameter(
                                                 name =  "parentName",
@@ -196,6 +196,9 @@ public class CategoryController {
             }
             categories.removeIf(category -> category.getCreationDate().compareTo(date) < 0);
         }
+
+        int numberOfCategories = categories.size();
+        categories = this.categoryService.getByPage(categories, pageNb);
         if (orderByName.isPresent() && orderByName.get()) {
             categories.sort(Comparator.comparing(Category::getName));
         } else {
@@ -219,8 +222,6 @@ public class CategoryController {
                 categories.sort((e1, e2) -> e2.getChildren().size() - e1.getChildren().size());
             }
         }
-        int numberOfCategories = categories.size();
-        categories = this.categoryService.getByPage(categories, pageNb);
         return ResponseEntity.ok(categoryService.getListDTO(categories, numberOfCategories));
     }
 
