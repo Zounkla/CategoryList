@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Category} from './category';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable} from 'rxjs/Observable';
 import {CategoryResponse} from './category-response';
 import { catchError } from 'rxjs/operators';
@@ -100,7 +100,14 @@ export class CategoryService {
   }
 
   public save(category: Category) {
-    return this.http.post<Category>(this.categoryUrl, category).pipe(
+    const categoryDTO = {
+      name: category.name,
+      oldName: category.oldName,
+      parentName: category.parentName
+    };
+    return this.http.post<Category>(this.categoryUrl, categoryDTO, {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+    }).pipe(
       catchError(() => {
         throw new Error('Category name already exists or can\'t be parent of itself');
       })
