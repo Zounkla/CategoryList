@@ -113,14 +113,14 @@ public class CategoryController {
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Category found",
-            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-            schema = @Schema(example = JsonExample.CATEGORIES_EXAMPLE)))
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    array = @ArraySchema(schema = @Schema(implementation = CategoryDTO.class))))
     })
     @Operation(summary = "Return all the categories", description = "Select all the categories on database " +
             "filtered by criterias")
     @RequestMapping(value = "/category/search", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> getCategories(@Parameter(
+    public ResponseEntity<List<CategoryDTO>> getCategories(@Parameter(
                                                 name =  "isRoot",
                                                 description  = "categories matching this state",
                                                 example = "false"
@@ -181,10 +181,7 @@ public class CategoryController {
             try {
                 date = formatter.parse(beforeDate.get());
             } catch (ParseException e) {
-                return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(
-                        categoryService.createError(HttpStatus.NOT_FOUND,
-                                "Dates must be formatted as 'yyyy-MM-dd'")
-                );
+                return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).build();
             }
             categories.removeIf(category -> category.getCreationDate().compareTo(date) > 0);
         }
@@ -194,10 +191,7 @@ public class CategoryController {
             try {
                 date = formatter.parse(afterDate.get());
             } catch (ParseException e) {
-                return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(
-                        categoryService.createError(HttpStatus.NOT_FOUND,
-                                "Dates must be formatted as 'yyyy-MM-dd'")
-                );
+                return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).build();
             }
             categories.removeIf(category -> category.getCreationDate().compareTo(date) < 0);
         }
@@ -226,7 +220,7 @@ public class CategoryController {
         }
         int numberOfCategories = categories.size();
         categories = this.categoryService.getByPage(categories, pageNb);
-        return ResponseEntity.ok(categoryService.createCategoriesJSON(categories, numberOfCategories));
+        return ResponseEntity.ok(categoryService.getListDTO(categories));
     }
 
 

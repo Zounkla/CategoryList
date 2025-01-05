@@ -42,7 +42,7 @@ export class CategoryService {
 
   public oldName: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
-  public creationDate: BehaviorSubject<Date> = new BehaviorSubject<Date>(new Date());
+  public creationDate: BehaviorSubject<Date | null> = new BehaviorSubject<Date | null>(null);
 
   public changeIsRoot(newValue: string) {
     this.isRoot = newValue;
@@ -92,7 +92,7 @@ export class CategoryService {
     if (this.orderChildren !== 'None') {
       this.categoriesUrl += '&orderByChildrenNumber=' + this.orderChildren;
     }
-    return this.http.get<CategoryResponse>(this.categoriesUrl);
+    return this.http.get<Category[]>(this.categoriesUrl);
   }
   public findAll() {
     const pageUrl = 'http://localhost:8080/category/all';
