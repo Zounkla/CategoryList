@@ -1,8 +1,7 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Category} from './category';
-import {HttpClient} from '@angular/common/http';
-import {HttpErrorResponse} from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable} from 'rxjs/Observable';
 import {CategoryResponse} from './category-response';
 import { catchError } from 'rxjs/operators';
@@ -43,7 +42,7 @@ export class CategoryService {
 
   public oldName: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
-  public creationDate: BehaviorSubject<Date> = new BehaviorSubject<Date>(new Date());
+  public creationDate: BehaviorSubject<Date | null> = new BehaviorSubject<Date | null>(null);
 
   public changeIsRoot(newValue: string) {
     this.isRoot = newValue;
@@ -101,9 +100,16 @@ export class CategoryService {
   }
 
   public save(category: Category) {
-    return this.http.post<Category>(this.categoryUrl, category).pipe(
-      catchError(error => {
-        throw new Error("Category name already exists or can't be parent of itself");
+    const categoryDTO = {
+      name: category.name,
+      oldName: category.oldName,
+      parentName: category.parentName
+    };
+    return this.http.post<Category>(this.categoryUrl, categoryDTO, {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+    }).pipe(
+      catchError(() => {
+        throw new Error('Category name already exists or can\'t be parent of itself');
       })
     );
   }
@@ -122,7 +128,7 @@ export class CategoryService {
   }
 
   public deleteCategory(categoryName: string) {
-    const deleteCategoryUrl = 'http://localhost:8080/category/deleteCategory?categoryName=' + categoryName;
+    const deleteCategoryUrl = 'http://localhost:8080/category?categoryName=' + categoryName;
     return this.http.delete(deleteCategoryUrl);
   }
   public setOldName(newName: string) {

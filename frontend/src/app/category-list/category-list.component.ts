@@ -47,9 +47,9 @@ export class CategoryListComponent implements OnInit {
 
   fetchData() {
     this.categoryService.searchCategories(this.parentName).subscribe((data: CategoryResponse) => {
-      this.categories = Object.values(data.categories);
-      this.pageCount = data.pageCount;
-      this.categoryService.pages.next(data.pageCount);
+      this.categories = data.categories;
+      this.pageCount = data.totalPages;
+      this.categoryService.pages.next(this.pageCount);
     });
     this.categoryService.currentPage.subscribe(value =>
         this.currentPage = value,
@@ -62,7 +62,7 @@ export class CategoryListComponent implements OnInit {
     this.categoryService.currentPage.next(0);
     this.fetchData();
     this.categoryService.lastParentName.next(category.name);
-    this.categoryService.creationDate.next(new Date(category.date));
+    this.categoryService.creationDate.next(new Date(category.creationDate));
   }
 
   displayFirstPage() {

@@ -1,17 +1,18 @@
 package org.example.tp1.services;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.example.tp1.DTO.CategoriesDTO;
+import org.example.tp1.DTO.CategoryDTO;
 import org.example.tp1.entities.Category;
 import org.example.tp1.repositories.CategoryRepository;
-import org.json.JSONObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.InvalidParameterException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @org.springframework.stereotype.Service
 public class CategoryService {
@@ -22,52 +23,6 @@ public class CategoryService {
 
     public CategoryService(CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
-    }
-
-    public String createError(HttpStatus status, String message) {
-        Map<String, String> map = new HashMap<>();
-        map.put("status", String.valueOf(status.value()));
-        map.put("message", message);
-        JSONObject jo = new JSONObject(map);
-        return jo.toString();
-    }
-
-    public String createCategoryJSON(Category category) {
-        Map<String, String> map = new HashMap<>();
-        map.put("id", String.valueOf(category.getId()));
-        map.put("name", category.getName());
-        map.put("children", category.getChildrenNames().toString());
-        Category parent = category.getParent();
-        map.put("parent", parent == null ? "null" : parent.getName());
-        map.put("date", category.getCreationDate().toString());
-        JSONObject jo = new JSONObject(map);
-        return jo.toString();
-    }
-
-    public String createCategoriesJSON(List<Category> categories, int size) {
-        HashMap<String, Map
-                <String, Map<String, String>>> jsonMap = new LinkedHashMap<>();
-        HashMap<String, Map<String, String>> categoriesMap = new LinkedHashMap<>();
-        for (Category category : categories) {
-            SortedMap<String, String> map = new TreeMap<>();
-            map.put("id", String.valueOf(category.getId()));
-            map.put("name", category.getName());
-            map.put("children", category.getChildrenNames().toString());
-            Category parent = category.getParent();
-            map.put("parent", parent == null ? "null" : parent.getName());
-            map.put("date", category.getCreationDate().toString());
-            categoriesMap.put(category.getName(), map);
-        }
-        jsonMap.put("categories", categoriesMap);
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            StringBuilder result = new StringBuilder(objectMapper.writeValueAsString(jsonMap));
-            result.deleteCharAt(result.length() - 1);
-            result.append(",\n\"pageCount\": \"").append((int) Math.ceil((double) size / CATEGORY_PER_PAGE)).append("\"").append("}");
-            return result.toString();
-        } catch (JsonProcessingException e) {
-            return "";
-        }
     }
 
     public boolean categoryAlreadyExists(String name) {
@@ -137,13 +92,14 @@ public class CategoryService {
         }
         Category category = optionalCategory.get();
         Category parent = category.getParent();
+
         for (Category child : category.getChildren()) {
             child.setParent(parent);
-            if (parent != null) {
-                parent.addChildren(child);
-                categoryRepository.save(parent);
-            }
             categoryRepository.save(child);
+        }
+        if (parent != null) {
+            parent.removeChildren(category);
+            categoryRepository.save(parent);
         }
         categoryRepository.delete(category);
         return category;
@@ -152,6 +108,26 @@ public class CategoryService {
     public List<Category> getByPage(List<Category> categories, int pageNb) {
         Page<Category> categoryPage = getCategoriesPage(pageNb, categories);
         return new ArrayList<>(categoryPage.getContent());
+    }
+
+    public CategoryDTO getDTO(Category category) {
+        String parentName = category.getParent() == null ? "" : category.getParent().getName();
+        return new CategoryDTO(
+                category.getId(),
+                category.getName(),
+                parentName,
+                category.getChildrenNames(),
+                category.getCreationDate()
+        );
+    }
+
+    public CategoriesDTO getListDTO(List<Category> categories, int totalItems) {
+        List<CategoryDTO> result = new ArrayList<>();
+        for (Category category : categories) {
+            result.add(getDTO(category));
+        }
+        totalItems = (int) Math.ceil((double) totalItems / CATEGORY_PER_PAGE);
+        return new CategoriesDTO(result, totalItems);
     }
 
     private Page<Category> getCategoriesPage(int page, List<Category> categories) {

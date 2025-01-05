@@ -31,13 +31,13 @@ export class AppComponent implements OnInit {
     this.title = 'CategoryList';
     this.category = new Category();
     this.actualParentName = 'None';
-    this.creationDate = new Date('');
+    this.creationDate = new Date();
     this.service.lastParentName.subscribe( value => {
       this.actualParentName = value;
     });
     this.pageCount = this.service.pages.value;
     this.service.searchCategories(this.actualParentName).subscribe((data: CategoryResponse) => {
-      this.categories = Object.values(data.categories);
+      this.categories = data.categories;
     });
     this.service.creationDate.subscribe(data => {
       this.creationDate = data;

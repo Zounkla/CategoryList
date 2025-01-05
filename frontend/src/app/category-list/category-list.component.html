@@ -10,7 +10,7 @@
       <tr *ngFor="let category of categories">
         <td class="d-grid">
           <button type="button" class="btn border" (click)="changeParentCategory(category)">
-                     {{ category.name  }} - {{ category.date | date : "medium"}}
+                     {{ category.name  }} - {{ category.creationDate | date : "medium"}}
           </button>
         </td>
       </tr>
