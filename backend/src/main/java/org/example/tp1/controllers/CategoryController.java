@@ -2,6 +2,7 @@ package org.example.tp1.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -232,15 +233,27 @@ public class CategoryController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Categories found",
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(example = JsonExample.CATEGORIES_EXAMPLE)))
+                    array = @ArraySchema(schema = @Schema(implementation = CategoryDTO.class))))
     })
     @Operation(summary = "Returns all the categories", description = "Selects all the categories on database and " +
             "returns it in JSON format")
     @RequestMapping(value = "/category/all", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> getCategories() {
+    public ResponseEntity<List<CategoryDTO>> getCategories() {
         List<Category> categories = categoryService.getCategories();
-        return ResponseEntity.ok(categoryService.createCategoriesJSON(categories, categories.size()));
+        List<CategoryDTO> result = new ArrayList<>();
+        for (Category category : categories) {
+            String parentName = category.getParent() == null ? "" : category.getParent().getName();
+            CategoryDTO categoryDTO = new CategoryDTO(
+                    category.getId(),
+                    category.getName(),
+                    parentName,
+                    category.getChildrenNames(),
+                    category.getCreationDate()
+            );
+            result.add(categoryDTO);
+        }
+        return ResponseEntity.ok(result);
     }
 
 

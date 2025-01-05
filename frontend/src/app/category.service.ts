@@ -96,7 +96,7 @@ export class CategoryService {
   }
   public findAll() {
     const pageUrl = 'http://localhost:8080/category/all';
-    return this.http.get<CategoryResponse>(pageUrl);
+    return this.http.get<Category[]>(pageUrl);
   }
 
   public save(category: Category) {

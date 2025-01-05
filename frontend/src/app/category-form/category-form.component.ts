@@ -51,7 +51,7 @@ export class CategoryFormComponent implements OnInit {
 
   fetchData() {
     this.categoryService.findAll().subscribe(data => {
-      this.categories = Object.values(data.categories);
+      this.categories = data;
     });
   }
 
