@@ -1,3 +1,15 @@
 p {
   word-wrap: break-word;
 }
+
+body {
+  background-color: #f8f9fa;
+}
+
+.card {
+  border-radius: 8px;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
