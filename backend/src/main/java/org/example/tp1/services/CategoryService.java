@@ -49,7 +49,7 @@ public class CategoryService {
         if (optionalParentCategory.isPresent()) {
             parent = optionalParentCategory.get();
         }
-        if (categoryAlreadyExists(newName)) {
+        if (!categoryName.equals(newName) && categoryAlreadyExists(newName)) {
             throw new InvalidParameterException("Category already exists");
         }
         if (category == parent) {
