@@ -34,10 +34,15 @@ export class CategoryFormComponent implements OnInit {
   }
 
   onSubmit() {
-    this.categoryService.save(this.category).subscribe(
-      (_) => this.gotoCategoryList(),
-      (error: Error) => this.displayError(error));
-
+    if (this.category.oldName === '') {
+      this.categoryService.save(this.category).subscribe(
+        (_) => this.gotoCategoryList(),
+        (error: Error) => this.displayError(error));
+    } else {
+      this.categoryService.edit(this.category).subscribe(
+        (_) => this.gotoCategoryList(),
+        (error: Error) => this.displayError(error));
+    }
   }
 
   onParentChange(newValue) {
