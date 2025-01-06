@@ -1,35 +1,37 @@
-<div class="card my-5">
+<div class="card my-3">
   <div class="card-body">
-    <table class="table table-bordered table-striped">
-      <thead class="thead-dark">
-      <tr>
-        <th scope="col">Name</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr *ngFor="let category of categories">
-        <td class="d-grid">
-          <button type="button" class="btn border" (click)="changeParentCategory(category)">
-                     {{ category.name  }} - {{ category.creationDate | date : "medium"}}
-          </button>
-        </td>
-      </tr>
-      </tbody>
-    </table>
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped">
+        <thead class="thead-dark">
+        <tr>
+          <th scope="col">Name</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let category of categories">
+          <td class="d-grid">
+            <button type="button" class="btn border" (click)="changeParentCategory(category)">
+                       {{ category.name  }} - {{ category.creationDate | date : "medium"}}
+            </button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
-  <div class="d-flex justify-content-around">
-    <div>
-      <button class="position-relative" (click)="displayFirstPage()">&laquo;</button>
-      <button class="position-relative" (click)="displayPreviousPage()"
+  <div class="d-flex justify-content-around flex-wrap">
+    <div class="m-2">
+      <button class="btn btn-secondary" (click)="displayFirstPage()">&laquo;</button>
+      <button class="btn btn-secondary" (click)="displayPreviousPage()"
               [disabled]="isNotPossibleToDisplayPreviousPage()">&lsaquo;</button>
     </div>
     <div>
       <p>Page {{currentPage + 1}} of {{pageCount}}</p>
     </div>
     <div>
-      <button class="position-relative" (click)="displayNextPage()"
+      <button class="btn btn-secondary" (click)="displayNextPage()"
               [disabled]="isNotPossibleToDisplayNextPage()">&rsaquo;</button>
-      <button class="position-relative" (click)="displayLastPage()">&raquo;</button>
+      <button class="btn btn-secondary" (click)="displayLastPage()">&raquo;</button>
     </div>
   </div>
 </div>

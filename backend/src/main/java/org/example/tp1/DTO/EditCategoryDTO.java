@@ -5,9 +5,11 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class CreateCategoryDTO  {
+public class EditCategoryDTO {
 
     private String name;
+
+    private String oldName;
 
     private String parentName;
 }

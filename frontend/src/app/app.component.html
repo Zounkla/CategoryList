@@ -1,14 +1,14 @@
 <div class="container-fluid">
   <div class="row">
-    <div class="col-2 border">
-      <h1 class="fs-3">Category Information</h1>
-      <ul>
+    <div class="col-12 col-md-3 col-lg-2 border mb-3">
+      <h1 class="fs-4 text-center">Category Information</h1>
+      <ul class="list-unstyled">
         <li><p>Current category : {{ actualParentName }}</p></li>
         <li><p>Creation Date : {{creationDate | date : "medium"}} </p></li>
       </ul>
     </div>
-    <div class="col-8 border">
-      <div class="card bg-dark my-5">
+    <div class="col-12 col-md-6 col-lg-8 border">
+      <div class="card bg-dark my-3 d-flex justify-content-center">
         <div class="card-body">
           <h2 class="card-title text-center text-white py-3">{{ title }}</h2>
           <ul class="text-center list-inline py-3">
@@ -16,55 +16,51 @@
               <a (click)='resetParent()' routerLink="/home" class="btn btn-info">Home</a>
             </li>
           </ul>
-          <ul>
-            <li class="list-inline-item" *ngIf="actualParentName == 'None'" >
-              <select [(ngModel)]="isRoot"
-                      (change)="changeIsRoot($event.target.value)">
-                <option value="None">All categories</option>
-                <option value="true">Root categories</option>
-                <option value="false">Non-root categories</option>
-              </select>
-            </li>
-            <li class="list-inline-item">
-              <span class="text-white">Before: </span>
-              <input type="date" [(ngModel)]="dateBefore"
-                     (change)="changeBeforeDate($event.target.value)"/>
-            </li>
-            <li class="list-inline-item">
-              <span class="text-white">After: </span>
-              <input type="date" [(ngModel)]="dateAfter"
-                     (change)="changeAfterDate($event.target.value)"/>
-            </li>
-          </ul>
-          <ul>
-            <li>
-              <span class="text-white">Order by name: </span>
-              <select [(ngModel)]="orderName"
-                      (change)="changeOrderName($event.target.value)">
-                <option value="None">No filter</option>
-                <option value="true">Yes</option>
-                <option value="false">No</option>
-              </select>
-            </li>
-            <li>
-              <span class="text-white">Order by creation date: </span>
-              <select [(ngModel)]="orderDate"
-                      (change)="changeOrderDate($event.target.value)">
-                <option value="None">No filter</option>
-                <option value="true">Yes</option>
-                <option value="false">No</option>
-              </select>
-            </li>
-            <li>
-              <span class="text-white">Order by number of children: </span>
-              <select [(ngModel)]="orderChildren"
-                      (change)="changeOrderChildren($event.target.value)">
-                <option value="None">No filter</option>
-                <option value="true">Yes</option>
-                <option value="false">No</option>
-              </select>
-            </li>
-          </ul>
+          <div class="form-group text-center mx-auto w-75 mb-3" *ngIf="actualParentName == 'None'" >
+            <select [(ngModel)]="isRoot"
+                    (change)="changeIsRoot($event.target.value)">
+              <option value="None">All categories</option>
+              <option value="true">Root categories</option>
+              <option value="false">Non-root categories</option>
+            </select>
+          </div>
+          <div class="form-group text-center mx-auto w-75 mb-3">
+            <span class="text-white">Before: </span>
+            <input type="date" [(ngModel)]="dateBefore"
+                   (change)="changeBeforeDate($event.target.value)"/>
+          </div>
+          <div class="form-group text-center mx-auto w-75 mb-3">
+            <span class="text-white">After: </span>
+            <input type="date" [(ngModel)]="dateAfter"
+                   (change)="changeAfterDate($event.target.value)"/>
+          </div>
+        </div>
+        <div class="form-group text-center mx-auto w-75 mb-3">
+          <span class="text-white">Order by name: </span>
+          <select [(ngModel)]="orderName"
+                  (change)="changeOrderName($event.target.value)">
+            <option value="None">No filter</option>
+            <option value="true">Yes</option>
+            <option value="false">No</option>
+          </select>
+        </div>
+        <div class="form-group text-center mx-auto w-75 mb-3">
+          <span class="text-white">Order by creation date: </span>
+          <select [(ngModel)]="orderDate"
+                  (change)="changeOrderDate($event.target.value)">
+            <option value="None">No filter</option>
+            <option value="true">Yes</option>
+            <option value="false">No</option>
+          </select>
+        </div>
+        <div class="form-group text-center mx-auto w-75 mb-3">
+          <span class="text-white">Order by number of children: </span>
+          <select [(ngModel)]="orderChildren"
+                  (change)="changeOrderChildren($event.target.value)">
+            <option value="None">No filter</option>
+            <option value="true">Yes</option>
+            <option value="false">No</option>
+          </select>
         </div>
       </div>
       <router-outlet></router-outlet>

@@ -102,10 +102,24 @@ export class CategoryService {
   public save(category: Category) {
     const categoryDTO = {
       name: category.name,
-      oldName: category.oldName,
       parentName: category.parentName
     };
     return this.http.post<Category>(this.categoryUrl, categoryDTO, {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+    }).pipe(
+      catchError(() => {
+        throw new Error('Category name already exists or can\'t be parent of itself');
+      })
+    );
+  }
+
+  public edit(category: Category) {
+    const categoryDTO = {
+      name: category.name,
+      oldName: category.oldName,
+      parentName: category.parentName
+    };
+    return this.http.put<Category>(this.categoryUrl, categoryDTO, {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' })
     }).pipe(
       catchError(() => {

@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.example.tp1.DTO.CategoriesDTO;
 import org.example.tp1.DTO.CategoryDTO;
 import org.example.tp1.DTO.CreateCategoryDTO;
+import org.example.tp1.DTO.EditCategoryDTO;
 import org.example.tp1.entities.Category;
 import org.example.tp1.services.CategoryService;
 import org.springframework.http.HttpHeaders;
@@ -41,7 +42,7 @@ public class CategoryController {
                     "cannot be parent of itself or parent does not exist",
                     content = @Content)
     })
-    @Operation(summary = "Create category", description = "Inserts or update a category into database")
+    @Operation(summary = "Create category", description = "Inserts a category into database")
     @PostMapping(value = "/category",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -49,19 +50,8 @@ public class CategoryController {
 
         String name = categoryDTO.getName();
         String parentName = categoryDTO.getParentName();
-        String oldName = categoryDTO.getOldName();
         if (name.isEmpty() || parentName.isEmpty()) {
             return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).build();
-        }
-
-        if (!oldName.isEmpty() && categoryService.categoryAlreadyExists(oldName)) {
-            Category category;
-            try {
-                category = categoryService.updateCategory(oldName, name, parentName);
-            } catch (UnsupportedOperationException | InvalidParameterException e) {
-                return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).build();
-            }
-            return ResponseEntity.ok(categoryService.getDTO(category));
         }
         if (!parentName.equals("None") && !categoryService.categoryAlreadyExists(parentName)) {
             return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).build();
@@ -74,6 +64,37 @@ public class CategoryController {
             return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).build();
         }
         return ResponseEntity.ok(categoryService.getDTO(category));
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Category edited",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = CategoryDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Category not found",
+                    content = @Content),
+            @ApiResponse(responseCode = "412", description = "Category already exists or " +
+                    "cannot be parent of itself or parent does not exist",
+                    content = @Content)
+    })
+    @Operation(summary = "Edit category", description = "Update a category into database")
+    @PutMapping(value = "/category",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CategoryDTO> edit(@RequestBody EditCategoryDTO categoryDTO) {
+        String name = categoryDTO.getName();
+        String parentName = categoryDTO.getParentName();
+        String oldName = categoryDTO.getOldName();
+        if (!oldName.isEmpty() && categoryService.categoryAlreadyExists(oldName)) {
+            Category category;
+            try {
+                category = categoryService.updateCategory(oldName, name, parentName);
+            } catch (UnsupportedOperationException | InvalidParameterException e) {
+                return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).build();
+            }
+            return ResponseEntity.ok(categoryService.getDTO(category));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
     @ApiResponses(value = {
@@ -195,7 +216,7 @@ public class CategoryController {
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
             schema = @Schema(implementation = CategoriesDTO.class)))
     })
-    @Operation(summary = "Returns all the categories", description = "Selects all the categories on database and " +
+    @Operation(summary = "Return all the categories", description = "Selects all the categories on database and " +
             "returns it in JSON format")
     @GetMapping(value = "/category/all",
             produces = MediaType.APPLICATION_JSON_VALUE)
