@@ -1,15 +1,10 @@
-FROM maven:3.8-openjdk-17-slim
+FROM maven:3.8-eclipse-temurin-17-alpine AS build
+WORKDIR /app
+COPY . .
+RUN mvn clean package
 
-WORKDIR /backend
 
-COPY pom.xml .
-RUN apt install -y watch
-
-COPY mvnw .
-COPY .mvn .mvn
-
-COPY src ./src
-
+FROM eclipse-temurin:17-jdk-alpine
+COPY --from=build /app/target/TP1-0.0.1-SNAPSHOT.jar categoryList.jar
+ENTRYPOINT ["java","-jar","categoryList.jar"]
 EXPOSE 8080
-
-CMD sh ./docker-entrypoint.sh
