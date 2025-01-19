@@ -6,7 +6,7 @@ import { AppComponent } from './app.component';
 import {CategoryListComponent} from './category-list/category-list.component';
 import {CategoryFormComponent} from './category-form/category-form.component';
 import {BrowserModule} from '@angular/platform-browser';
-import {CategoryService} from './category.service';
+import {CategoryService} from './services/category.service';
 
 
 @NgModule({

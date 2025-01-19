@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
-import {Category} from '../category';
+import {Category} from '../models/category';
 import {Subscription} from 'rxjs/Subscription';
-import {CategoryService} from '../category.service';
-import {CategoryResponse} from '../category-response';
+import {CategoryService} from '../services/category.service';
+import {CategoryResponse} from '../models/category-response';
 
 @Component({
   selector: 'app-category-list',

@@ -1,9 +1,9 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {Category} from './category';
+import {Category} from '../models/category';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable} from 'rxjs/Observable';
-import {CategoryResponse} from './category-response';
+import {CategoryResponse} from '../models/category-response';
 import { catchError } from 'rxjs/operators';
 
 @Injectable()
